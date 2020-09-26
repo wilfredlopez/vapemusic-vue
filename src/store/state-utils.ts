@@ -1,5 +1,6 @@
 import { Song } from "@/models/Song.model";
 import { Storage } from "../utils/Storage";
+import { State } from "./state";
 export const FAV_TRACKS_LOCAL_STORAGE_KEY = "USER-FAV-TRACKS-VUE";
 export const RECENT_TRACKS_LOCAL_STORAGE_KEY = "USER-RECENT-TRACKS-VUE";
 
@@ -60,4 +61,20 @@ export function filterUniqueIds(songIds: string[]) {
 
 export function filterUniqueSongs(songs: Song[]) {
   return filterUnique(songs, (every, current) => every.id === current.id);
+}
+
+export function getMusic(state: State, songs: Song[]) {
+  const uniqueTracks = filterUniqueSongs([...state.music.tracks, ...songs]);
+  const songsIds = getSongIds(songs);
+  const uniqueNew = filterUniqueIds([...state.music.newTracks, ...songsIds]);
+  const hotTracks = songs
+    .filter(s => s.promoted && s.promoted === true)
+    .map(s => s.id);
+
+  const uniqueHot = filterUniqueIds([...hotTracks, ...state.music.hotTracks]);
+  return {
+    tracks: uniqueTracks,
+    newTracks: uniqueNew,
+    hotTracks: uniqueHot
+  };
 }

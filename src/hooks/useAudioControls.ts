@@ -1,5 +1,5 @@
 import { AudioHTMLAttributes, ref, watch, computed, Ref } from "vue";
-import { Omit } from "../../models/graphQlTypes";
+import { Omit } from "@/models/graphQlTypes";
 
 interface TimeRangeType {
   start: number;
@@ -54,7 +54,7 @@ export default function useAudioControls({ audioEl, ...props }: Props) {
   const bufferState = ref([] as TimeRangeType[]);
   const currentAudioTimeRef = ref("0");
   const currentAudioTimeLeftRef = ref("0");
-  let lockPlay = false;
+  // let lockPlay = false;
 
   function setPausedState(pause: boolean) {
     pausedState.value = pause;
@@ -151,21 +151,22 @@ export default function useAudioControls({ audioEl, ...props }: Props) {
       if (!eleme) {
         return;
       }
-      if (!lockPlay) {
-        const promise = eleme.play();
-        const isPromise = typeof promise === "object";
+      eleme.play();
+      // if (!lockPlay) {
+      //   const promise = eleme.play();
+      //   const isPromise = typeof promise === "object";
 
-        if (isPromise) {
-          lockPlay = true;
-          const resetLock = () => {
-            lockPlay = false;
-          };
-          promise.then(resetLock, resetLock);
-        }
+      //   if (isPromise) {
+      //     lockPlay = true;
+      //     const resetLock = () => {
+      //       lockPlay = false;
+      //     };
+      //     promise.then(resetLock, resetLock);
+      //   }
 
-        return promise;
-      }
-      return undefined;
+      //   return promise;
+      // }
+      // return undefined;
     },
     mute: () => {
       if (audioEl.value) {
@@ -174,8 +175,11 @@ export default function useAudioControls({ audioEl, ...props }: Props) {
     },
     pause: () => {
       const el = audioEl.value;
-      if (el && !lockPlay) {
-        return el.pause();
+      // if (el && !lockPlay) {
+      //   return el.pause();
+      // }
+      if (el) {
+        el.pause();
       }
     },
     seek: (time: number) => {
@@ -207,7 +211,7 @@ export default function useAudioControls({ audioEl, ...props }: Props) {
 
   watch([autoPlay.value, src], () => {
     const el = audioEl.value;
-    if (autoPlay.value && el && el.paused) {
+    if (el && !el.paused) {
       controls.play();
     }
   });

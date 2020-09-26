@@ -1,16 +1,10 @@
-import { deepCopy } from "@wilfredlopez/react-utils";
 import { ActionTree, ActionContext } from "vuex";
 import { State } from "./state";
 import { Mutations } from "./mutations";
 import { ActionTypes } from "./action-types";
 import { MutationTypes } from "./mutation-types";
 import { GetterReturn } from "./getters";
-import {
-  filterUniqueIds,
-  filterUniqueSongs,
-  getSongIds,
-  setLocalStorageFaveTracks
-} from "./state-utils";
+import { getMusic, setLocalStorageFaveTracks } from "./state-utils";
 import { Song } from "@/models/Song.model";
 import { User } from "@/models/User.model";
 
@@ -48,7 +42,7 @@ export interface Actions {
   ): void;
   [ActionTypes.ADD_SONGS_IF_NOT_ACTION]: ActionResolve<Song[]>;
   [ActionTypes.SET_PLAYER_OPEN_ACTION]: ActionResolve<boolean>;
-  [ActionTypes.PAUSE_ACTION]: ActionResolve<boolean>;
+  [ActionTypes.PAUSE_ACTION]: ActionResolveNoPayload;
   [ActionTypes.TOGGLE_PLAYING_ACTION]: ActionResolveNoPayload;
   [ActionTypes.PLAY_ACTION]: ActionResolve<Song>;
   [ActionTypes.SEEK_ACTION]: ActionResolve<number>;
@@ -66,39 +60,14 @@ export const actions: ActionTree<State, State> & Actions = {
     commit(MutationTypes.TOGGLE_PLAYING);
   },
   [ActionTypes.ADD_SONGS_ACTION]({ commit, state }, songs) {
-    const oldTracks = deepCopy(state.music.tracks);
-    const newTracks = songs.map(s => s.id);
-    const hotTracks = songs
-      .filter(s => s.promoted && s.promoted === true)
-      .map(s => s.id);
-
-    const uniqueHot = deepCopy([...hotTracks, ...state.music.hotTracks]);
-    const uniqueNew = deepCopy([...newTracks, ...state.music.newTracks]);
-    const uniqueTracks = filterUniqueSongs([...songs, ...oldTracks]);
-    const music = {
-      tracks: uniqueTracks,
-      newTracks: uniqueNew,
-      hotTracks: uniqueHot
-    };
+    const music = getMusic(state, songs);
     commit(MutationTypes.ADD_SONGS, music);
   },
   [ActionTypes.SET_PLAYER_OPEN_ACTION]({ commit }, payload) {
     commit(MutationTypes.SET_PLAYER_OPEN, payload);
   },
   [ActionTypes.ADD_SONGS_IF_NOT_ACTION]({ commit, state }, songs) {
-    const uniqueTracks = filterUniqueSongs([...state.music.tracks, ...songs]);
-    const songsIds = getSongIds(songs);
-    const uniqueNew = filterUniqueIds([...state.music.newTracks, ...songsIds]);
-    const hotTracks = songs
-      .filter(s => s.promoted && s.promoted === true)
-      .map(s => s.id);
-
-    const uniqueHot = filterUniqueIds([...hotTracks, ...state.music.hotTracks]);
-    const music = {
-      tracks: uniqueTracks,
-      newTracks: uniqueNew,
-      hotTracks: uniqueHot
-    };
+    const music = getMusic(state, songs);
     commit(MutationTypes.ADD_SONGS, music);
   },
   [ActionTypes.AUDIO_TIME_ACTION]({ commit }, payload) {
@@ -124,9 +93,9 @@ export const actions: ActionTree<State, State> & Actions = {
     const index = (playing.index + 1) & getters.tracks.length;
     commit(MutationTypes.NEXT, { index });
   },
-  [ActionTypes.PAUSE_ACTION]({ commit }, payload) {
+  [ActionTypes.PAUSE_ACTION]({ commit }) {
     //Done !
-    commit(MutationTypes.PAUSE, payload);
+    commit(MutationTypes.PAUSE);
   },
   [ActionTypes.PERCENT_PLAYED_ACTION]({ commit }, payload) {
     commit(MutationTypes.PERCENT_PLAYED, payload);

@@ -22,7 +22,7 @@ export type Mutations<S = State> = {
   }>;
   [MutationTypes.SET_PLAYER_OPEN]: MutationResolve<boolean>;
   [MutationTypes.TOGGLE_PLAYING]: MutationResolveNever;
-  [MutationTypes.PAUSE]: MutationResolve<boolean>;
+  [MutationTypes.PAUSE]: MutationResolveNever;
   [MutationTypes.SET_PLAYING]: MutationResolveNever;
   [MutationTypes.PLAY_NEW]: MutationResolve<{
     track: Song;
@@ -51,8 +51,8 @@ export const mutations: MutationTree<State> & Mutations = {
     state.playing.isPlaying = !state.playing.isPlaying;
     // state.counter = payload
   },
-  [MutationTypes.PAUSE](state, payload) {
-    state.playing.isPlaying = payload;
+  [MutationTypes.PAUSE](state) {
+    state.playing.isPlaying = false;
   },
   [MutationTypes.SET_PLAYING](state) {
     state.playing.isPlaying = true;

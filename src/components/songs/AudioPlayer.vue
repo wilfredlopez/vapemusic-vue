@@ -53,56 +53,56 @@
 import { defineComponent, computed, ref, watch } from "vue";
 import { useStore } from "@/store";
 import { ActionTypes } from "@/store/action-types";
-import useAudioControls from "../hooks/useAudioControls";
+import useAudioControls from "@/hooks/useAudioControls";
 
 export default defineComponent({
   name: "AudioPlayer",
   setup() {
     const store = useStore();
     const audioEl = ref<HTMLAudioElement | null>(null);
-    const playerOpen = computed(function () {
+    const playerOpen = computed(function() {
       return store.state.ui.playerOpen;
     });
-    const song = computed(function () {
+    const song = computed(function() {
       return store.getters.currentTrack;
     });
-    const audioUrl = computed(function () {
+    const audioUrl = computed(function() {
       return song.value.audioUrl;
     });
 
     const { state, controls } = useAudioControls({
       audioEl,
-      src: audioUrl,
+      src: audioUrl
     });
 
     watch(song, () => {
       if (audioEl.value) {
         audioEl.value.src = audioUrl.value;
       }
-      store.dispatch(ActionTypes.PAUSE_ACTION, true);
+      store.dispatch(ActionTypes.PLAY_ACTION);
       controls.play();
       state.paused.value = false;
     });
 
-    const isPlaying = computed(function () {
+    const isPlaying = computed(function() {
       return store.state.playing.isPlaying;
     });
 
-    const percentPlayed = computed(function () {
+    const percentPlayed = computed(function() {
       return store.state.playing.percentPlayed;
     });
 
-    watch(state.percentPlayed, (newValue) => {
+    watch(state.percentPlayed, newValue => {
       store.dispatch(ActionTypes.PERCENT_PLAYED_ACTION, newValue);
     });
 
     function togglePlaying() {
       if (isPlaying.value) {
+        store.dispatch(ActionTypes.PAUSE_ACTION);
         controls.pause();
-        store.dispatch(ActionTypes.PAUSE_ACTION, false);
       } else {
+        store.dispatch(ActionTypes.PLAY_ACTION);
         controls.play();
-        store.dispatch(ActionTypes.PAUSE_ACTION, true);
       }
     }
 
@@ -112,9 +112,9 @@ export default defineComponent({
       isPlaying,
       percentPlayed,
       togglePlaying,
-      audioEl,
+      audioEl
     };
-  },
+  }
 });
 </script>
 
@@ -122,8 +122,8 @@ export default defineComponent({
 <style scoped lang="scss">
 .player-container {
   position: fixed;
-  //   bottom: 57px;
-  bottom: 0px;
+  bottom: 57px;
+  // bottom: 0px;
   width: 100%;
   z-index: 1000;
 }
@@ -214,9 +214,9 @@ export default defineComponent({
 .icon {
   flex: 1 1;
   cursor: pointer;
-  color: #fa4d4d;
+  color: var(--brand-color, #fa4d4d);
   width: 50px;
-  fill: #fa4d4d;
+  fill: var(--brand-color, #fa4d4d);
 }
 
 .icon-inner,

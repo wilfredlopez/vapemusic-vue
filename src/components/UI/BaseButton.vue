@@ -13,19 +13,19 @@ export default {
     mode: {
       type: String, // 'flat' | 'outline'
       required: false,
-      default: null,
+      default: null
     },
     link: {
       type: Boolean,
       required: false,
-      default: false,
+      default: false
     },
     to: {
       type: String,
       required: false,
-      default: "/",
-    },
-  },
+      default: "/"
+    }
+  }
 };
 </script>
 
@@ -35,33 +35,36 @@ a {
   text-decoration: none;
   padding: 0.65rem 1rem;
   font: inherit;
-  background-color: #3a0061;
-  border: 1px solid #3a0061;
+  background-color: var(--main-color, #3a0061);
+  border: 1px solid var(--main-color, #3a0061);
   color: white;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 4px;
   margin-right: 0.5rem;
   display: inline-block;
+  outline: none;
+  box-sizing: border-box;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
 }
 
 a:hover,
 a:active,
 button:hover,
 button:active {
-  background-color: #270041;
-  border-color: #270041;
+  background-color: var(--main-color-shade, #270041);
+  border-color: var(--main-color-shade, #270041);
 }
 
 .flat {
   background-color: transparent;
-  color: #3a0061;
+  color: var(--main-color, #3a0061);
   border: none;
 }
 
 .outline {
   background-color: transparent;
-  border-color: #5d009a;
-  color: #270041;
+  border-color: var(--main-color, #3a0061);
+  color: var(--main-color, #3a0061);
 }
 
 .clear {
@@ -80,6 +83,6 @@ button:active {
 .outline:hover,
 .outline:active {
   /* background-color: #e5edff; */
-  background-color: #5d009a21;
+  background-color: var(--main-color-shade, #2e034b);
 }
 </style>

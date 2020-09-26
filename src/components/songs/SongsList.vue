@@ -2,34 +2,50 @@
   <div class="container">
     <div class="songs-list">
       <h1>New Music</h1>
+      <div v-if="loading">
+        Loading...
+      </div>
       <ul>
         <SongItem v-for="song in songs" :key="song.id" :song="song" />
       </ul>
-      <base-button>Load More</base-button>
+      <br />
+      <base-button @click="loadMore">Load More</base-button>
+      <br />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, inject } from "vue";
 import SongItem from "@/components/songs/SongItem.vue";
 import { useStore } from "@/store";
 // import { useStore } from "vuex";
+// import { useGetAllSongsQuery } from "@/hooks/useSongsQuery";
+// import { ApolloClient } from "apollo-boost";
+// import { ActionTypes } from "@/store/action-types";
+// import { GetAllSongsDocument } from "../../hooks/useSongsQuery";
+
 export default defineComponent({
   name: "SongsList",
   components: {
-    SongItem,
+    SongItem
   },
   setup() {
     const store = useStore();
 
-    const songs = computed(function () {
+    const songs = computed(function() {
       return store.state.music.tracks;
     });
+
+    const loadMore = inject("loadMore");
+    const loading = inject("loading");
     return {
       songs,
+      loading,
+      // error,
+      loadMore
     };
-  },
+  }
 });
 </script>
 
