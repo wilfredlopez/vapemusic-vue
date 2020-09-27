@@ -14,21 +14,22 @@ import { defineComponent, computed } from "vue";
 import TrackItem from "@/components/songs/TrackItem.vue";
 import { useStore } from "@/store";
 // import { useStore } from "vuex";
+
 export default defineComponent({
   name: "SongsList",
   components: {
-    TrackItem,
+    TrackItem
   },
   setup() {
     const store = useStore();
 
-    const songs = computed(function () {
+    const songs = computed(function() {
       return store.getters.hotTracks;
     });
     return {
-      songs,
+      songs
     };
-  },
+  }
 });
 </script>
 

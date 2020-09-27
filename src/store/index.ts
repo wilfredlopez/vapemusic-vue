@@ -13,7 +13,8 @@ export const store = createStore({
   state,
   getters,
   mutations,
-  actions
+  actions,
+  devtools: true
 });
 
 export type Store = Omit<

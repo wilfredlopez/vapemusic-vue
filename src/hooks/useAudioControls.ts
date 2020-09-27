@@ -26,7 +26,7 @@ function turnSecondsToMinutes(s: number) {
 function turnSecondsToMinutesReverse(s: number, totalDuration: number) {
   return turnSecondsToMinutes(totalDuration - s);
 }
-export type HTMLMediaProps = Omit<AudioHTMLAttributes, "src">;
+export type HTMLMediaProps = Omit<AudioHTMLAttributes, "src" | "autoplay">;
 
 export interface HTMLMediaState {
   //eslint-disable-next-line
@@ -42,9 +42,15 @@ export interface HTMLMediaState {
 interface Props extends HTMLMediaProps {
   audioEl: Ref<HTMLAudioElement | null>;
   src: Ref<string>;
+  autoplay?: boolean;
 }
 
-export default function useAudioControls({ audioEl, ...props }: Props) {
+export default function useAudioControls({
+  audioEl,
+  src,
+  autoplay,
+  ...props
+}: Props) {
   const pausedState = ref(true);
   const muteState = ref(false);
   const durationState = ref(0);
@@ -54,7 +60,7 @@ export default function useAudioControls({ audioEl, ...props }: Props) {
   const bufferState = ref([] as TimeRangeType[]);
   const currentAudioTimeRef = ref("0");
   const currentAudioTimeLeftRef = ref("0");
-  // let lockPlay = false;
+  const lockPlay = ref(false);
 
   function setPausedState(pause: boolean) {
     pausedState.value = pause;
@@ -138,44 +144,41 @@ export default function useAudioControls({ audioEl, ...props }: Props) {
   };
 
   const autoPlay = computed(() => {
-    return props.autoplay;
-  });
-
-  const src = computed(() => {
-    return props.src.value;
+    return autoplay;
   });
 
   const controls = {
-    play: () => {
+    play: async () => {
       const eleme = audioEl.value;
+      pausedState.value = false;
       if (!eleme) {
         return;
       }
-      eleme.play();
-      // if (!lockPlay) {
-      //   const promise = eleme.play();
-      //   const isPromise = typeof promise === "object";
 
-      //   if (isPromise) {
-      //     lockPlay = true;
-      //     const resetLock = () => {
-      //       lockPlay = false;
-      //     };
-      //     promise.then(resetLock, resetLock);
-      //   }
+      if (!lockPlay.value) {
+        const promise = eleme.play();
+        const isPromise = typeof promise === "object";
 
-      //   return promise;
-      // }
-      // return undefined;
+        if (isPromise) {
+          lockPlay.value = true;
+          const resetLock = () => {
+            lockPlay.value = false;
+          };
+          promise.then(resetLock, resetLock);
+        }
+        return promise;
+      }
+      return undefined;
     },
     mute: () => {
       if (audioEl.value) {
         audioEl.value.muted = true;
       }
     },
-    pause: () => {
+    pause: async () => {
       const el = audioEl.value;
-      // if (el && !lockPlay) {
+      pausedState.value = true;
+      // if (el && !lockPlay.value) {
       //   return el.pause();
       // }
       if (el) {
@@ -209,11 +212,14 @@ export default function useAudioControls({ audioEl, ...props }: Props) {
     }
   };
 
-  watch([autoPlay.value, src], () => {
-    const el = audioEl.value;
-    if (el && !el.paused) {
+  function handlePlayOrNot() {
+    if (audioEl.value && !pausedState.value) {
       controls.play();
     }
+  }
+
+  watch([autoPlay, src], () => {
+    handlePlayOrNot();
   });
 
   watch(audioEl, value => {
@@ -244,10 +250,8 @@ export default function useAudioControls({ audioEl, ...props }: Props) {
 
   watch(audioEl, (newValue, oldValue) => {
     if (newValue) {
-      newValue.addEventListener("loadeddata", () => {
-        if (!pausedState.value) {
-          newValue.play();
-        }
+      newValue.addEventListener("canplay", () => {
+        handlePlayOrNot();
       });
       newValue.addEventListener("play", function(e) {
         return Listeners.onPlay(e);
@@ -305,7 +309,6 @@ export default function useAudioControls({ audioEl, ...props }: Props) {
     state,
     audioTime: currentAudioTimeRef,
     audioTimeLeft: currentAudioTimeLeftRef,
-    audio: audioEl.value,
-    ref: audioEl
+    audio: audioEl
   };
 }

@@ -4,7 +4,6 @@ interface Options {
 }
 export default class MyStorage {
   _keys: string[];
-  currentId = 0;
   constructor() {
     this._keys = [];
   }
@@ -12,16 +11,8 @@ export default class MyStorage {
   // JSON "set" example
   async setObject(item: Options) {
     this._keys.push(item.key);
-    Promise.resolve(() => {
-      localStorage.setItem(
-        item.key,
-        JSON.stringify({
-          id: this.currentId,
-          value: item.value
-        })
-      );
-      this.currentId++;
-    });
+
+    localStorage.setItem(item.key, item.value);
   }
 
   // eslint-disable-next-line
@@ -33,20 +24,20 @@ export default class MyStorage {
 
   async setItem(item: Options) {
     this._keys.push(item.key);
-    Promise.resolve(localStorage.setItem(item.key, JSON.stringify(item.value)));
+    localStorage.setItem(item.key, item.value);
   }
 
-  async getItem(key: string) {
-    const value = await localStorage.getItem(key);
-    // console.log("Got item: ", value);
+  //eslint-disable-next-line
+  async getItem<T = any>(key: string) {
+    const value = localStorage.getItem(key);
     if (value === null) {
       return null;
     }
-    return JSON.parse(value);
+    return JSON.parse(value) as T | null;
   }
 
   async removeItem(key: string) {
-    await localStorage.removeItem(key);
+    localStorage.removeItem(key);
   }
 
   get keys() {

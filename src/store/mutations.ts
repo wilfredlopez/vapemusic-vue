@@ -4,6 +4,7 @@ import { MutationTree } from "vuex";
 import { MutationTypes } from "./mutation-types";
 import { State } from "./state";
 import { setLocalStorageRecentTracks } from "./state-utils";
+import { getTrackIndex } from "./actions";
 
 // eslint-disable-next-line
 export interface MutationResolve<P extends any, S = State> {
@@ -26,7 +27,6 @@ export type Mutations<S = State> = {
   [MutationTypes.SET_PLAYING]: MutationResolveNever;
   [MutationTypes.PLAY_NEW]: MutationResolve<{
     track: Song;
-    index: number;
     newRecentTracks: Song[];
   }>;
   [MutationTypes.SEEK]: MutationResolve<number>;
@@ -41,15 +41,15 @@ export type Mutations<S = State> = {
 
 export const mutations: MutationTree<State> & Mutations = {
   [MutationTypes.ADD_SONGS](state, music) {
-    state.music = music;
-    // state.counter = payload
+    state.music.hotTracks = music.hotTracks;
+    state.music.newTracks = music.newTracks;
+    state.music.tracks = music.tracks;
   },
   [MutationTypes.SET_PLAYER_OPEN](state, payload) {
     state.ui.playerOpen = payload;
   },
   [MutationTypes.TOGGLE_PLAYING](state) {
     state.playing.isPlaying = !state.playing.isPlaying;
-    // state.counter = payload
   },
   [MutationTypes.PAUSE](state) {
     state.playing.isPlaying = false;
@@ -59,16 +59,17 @@ export const mutations: MutationTree<State> & Mutations = {
   },
   [MutationTypes.PLAY_NEW](state, payload) {
     const tracks = state.music.tracks;
+    let index = getTrackIndex(state, payload.track.id);
     //adding track to end of the array of tracks if index=-1 and settings index to last.
-    if (payload.index === -1) {
-      payload.index = tracks.length;
+    if (index === -1) {
       tracks.push(payload.track);
+      index = tracks.length - 1;
     }
     setLocalStorageRecentTracks([payload.track, ...payload.newRecentTracks]);
-    state.music.tracks = tracks;
+    // state.music.tracks = tracks;
     state.ui.playerOpen = true;
     state.user.recentTracks = [payload.track, ...payload.newRecentTracks];
-    state.playing.index = payload.index;
+    state.playing.index = index;
     state.playing.isPlaying = true;
     state.playing.progress = 0;
     state.playing.currentAudioTime = "0";

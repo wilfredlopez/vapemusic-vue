@@ -1,52 +1,59 @@
 <template>
-  <teleport to="body">
-    <div class="player-container">
-      <audio ref="audioEl" :src="song.audioUrl" />
-      <div class="track-preview" @click="togglePlaying">
-        <div class="track-preview-progress">
-          <div class="track-preview-progress-track">
-            <div
-              class="track-preview-progress-current"
-              :style="{ width: percentPlayed + '%' }"
-            ></div>
+  <span>
+    <audio ref="audioEl" :src="currentTrack.audioUrl" style="display:none;" />
+    <PlayerDialog
+      :title="currentTrack.title"
+      :show="playerOpen"
+      @close="handleClosePlayer"
+    ></PlayerDialog>
+    <teleport to="body">
+      <div class="player-container">
+        <div class="track-preview" @click="togglePlaying">
+          <div class="track-preview-progress">
+            <div class="track-preview-progress-track">
+              <div
+                class="track-preview-progress-current"
+                :style="{ width: percentPlayed + '%' }"
+              ></div>
+            </div>
           </div>
-        </div>
-        <div class="track-preview-wrapper">
-          <div class="image-thumbnail">
-            <img :src="song.imageUrl" class="song-image" />
-          </div>
-          <div class="track-info">
-            <span class="title">{{ song.title }}</span>
-            <span class="artist">{{ song.artist }}</span>
-          </div>
-          <div class="track-controls">
-            <span class="icon-inner">
-              <svg
-                v-if="isPlaying"
-                class="icon"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
-              >
-                <path
-                  d="M208 432h-48a16 16 0 01-16-16V96a16 16 0 0116-16h48a16 16 0 0116 16v320a16 16 0 01-16 16zM352 432h-48a16 16 0 01-16-16V96a16 16 0 0116-16h48a16 16 0 0116 16v320a16 16 0 01-16 16z"
-                />
-              </svg>
-              <svg
-                v-else
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon"
-                viewBox="0 0 512 512"
-              >
-                <path
-                  d="M133 440a35.37 35.37 0 01-17.5-4.67c-12-6.8-19.46-20-19.46-34.33V111c0-14.37 7.46-27.53 19.46-34.33a35.13 35.13 0 0135.77.45l247.85 148.36a36 36 0 010 61l-247.89 148.4A35.5 35.5 0 01133 440z"
-                />
-              </svg>
-            </span>
+          <div class="track-preview-wrapper">
+            <div class="image-thumbnail">
+              <img :src="currentTrack.imageUrl" class="currentTrack-image" />
+            </div>
+            <div class="track-info">
+              <span class="title">{{ currentTrack.title }}</span>
+              <span class="artist">{{ currentTrack.artist }}</span>
+            </div>
+            <div class="track-controls">
+              <span class="icon-inner">
+                <svg
+                  v-if="isPlaying"
+                  class="icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                >
+                  <path
+                    d="M208 432h-48a16 16 0 01-16-16V96a16 16 0 0116-16h48a16 16 0 0116 16v320a16 16 0 01-16 16zM352 432h-48a16 16 0 01-16-16V96a16 16 0 0116-16h48a16 16 0 0116 16v320a16 16 0 01-16 16z"
+                  />
+                </svg>
+                <svg
+                  v-else
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon"
+                  viewBox="0 0 512 512"
+                >
+                  <path
+                    d="M133 440a35.37 35.37 0 01-17.5-4.67c-12-6.8-19.46-20-19.46-34.33V111c0-14.37 7.46-27.53 19.46-34.33a35.13 35.13 0 0135.77.45l247.85 148.36a36 36 0 010 61l-247.89 148.4A35.5 35.5 0 01133 440z"
+                  />
+                </svg>
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </teleport>
+    </teleport>
+  </span>
 </template>
 
 <script lang="ts">
@@ -54,65 +61,79 @@ import { defineComponent, computed, ref, watch } from "vue";
 import { useStore } from "@/store";
 import { ActionTypes } from "@/store/action-types";
 import useAudioControls from "@/hooks/useAudioControls";
+import PlayerDialog from "./PlayerDialog.vue";
 
 export default defineComponent({
   name: "AudioPlayer",
+  components: {
+    PlayerDialog
+  },
   setup() {
     const store = useStore();
     const audioEl = ref<HTMLAudioElement | null>(null);
     const playerOpen = computed(function() {
       return store.state.ui.playerOpen;
     });
-    const song = computed(function() {
+    const currentTrack = computed(function() {
       return store.getters.currentTrack;
     });
     const audioUrl = computed(function() {
-      return song.value.audioUrl;
+      return currentTrack.value.audioUrl;
     });
-
-    const { state, controls } = useAudioControls({
-      audioEl,
-      src: audioUrl
-    });
-
-    watch(song, () => {
-      if (audioEl.value) {
-        audioEl.value.src = audioUrl.value;
-      }
-      store.dispatch(ActionTypes.PLAY_ACTION);
-      controls.play();
-      state.paused.value = false;
-    });
-
     const isPlaying = computed(function() {
-      return store.state.playing.isPlaying;
+      return store.getters.playingState.isPlaying;
+    });
+
+    const { controls } = useAudioControls({
+      audioEl,
+      src: audioUrl,
+      autoplay: false,
+      loop: false
+    });
+
+    watch(currentTrack, (newval, oldvalue) => {
+      if (newval.audioUrl !== oldvalue.audioUrl) {
+        store.dispatch(ActionTypes.PLAY_ACTION, currentTrack.value);
+      }
     });
 
     const percentPlayed = computed(function() {
-      return store.state.playing.percentPlayed;
+      return store.getters.playingState.percentPlayed;
     });
 
-    watch(state.percentPlayed, newValue => {
+    watch(percentPlayed, newValue => {
+      console.log("percentPlayed watches");
       store.dispatch(ActionTypes.PERCENT_PLAYED_ACTION, newValue);
     });
 
     function togglePlaying() {
-      if (isPlaying.value) {
+      if (isPlaying.value === true) {
         store.dispatch(ActionTypes.PAUSE_ACTION);
-        controls.pause();
       } else {
-        store.dispatch(ActionTypes.PLAY_ACTION);
-        controls.play();
+        store.dispatch(ActionTypes.PAUSE_ACTION, true);
       }
+    }
+
+    watch(isPlaying, is => {
+      if (is) {
+        controls.play();
+      } else {
+        controls.pause();
+      }
+    });
+
+    function handleClosePlayer() {
+      store.dispatch(ActionTypes.SET_PLAYER_OPEN_ACTION, false);
     }
 
     return {
       playerOpen,
-      song,
+      currentTrack,
       isPlaying,
       percentPlayed,
       togglePlaying,
-      audioEl
+      audioEl,
+      handleClosePlayer
     };
   }
 });
@@ -173,7 +194,7 @@ export default defineComponent({
   width: 48px;
   height: 48px;
 }
-.song-image {
+.currentTrack-image {
   margin-top: 2px;
   width: 48px;
   height: 48px;

@@ -15,7 +15,10 @@ import { ActionTypes } from "@/store/action-types";
 
 export default defineComponent({
   props: {
-    song: Object as PropType<Song>,
+    song: {
+      type: Object as PropType<Song>,
+      required: true
+    }
   },
   name: "SongItem",
   setup(props) {
@@ -24,9 +27,9 @@ export default defineComponent({
       store.dispatch(ActionTypes.PLAY_ACTION, props.song);
     }
     return {
-      handleClick,
+      handleClick
     };
-  },
+  }
 });
 </script>
 

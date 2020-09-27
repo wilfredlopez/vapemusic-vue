@@ -11,9 +11,16 @@ import HomeIcon from "@/components/icons/HomeIcon.vue";
 import InfoIcon from "@/components/icons/InfoIcon.vue";
 import ProfileIcon from "@/components/icons/ProfileIcon.vue";
 import SearchIcon from "@/components/icons/SearchIcon.vue";
-import { apolloProvider, apolloClient } from "./apollo";
+import { apolloClient } from "./apollo";
+
+// Before you create app
+// (Vue as any).config.devtools = true;
 
 const app = createApp(App);
+// (app as any).config.devtools = process.env.NODE_ENV === "development";
+
+// After you create app
+// (window as any).__VUE_DEVTOOLS_GLOBAL_HOOK__.Vue = app.constructor;
 
 app.component("base-button", BaseButton);
 app.component("base-card", BaseCard);
@@ -26,9 +33,7 @@ app.component("profile-icon", ProfileIcon);
 app.component("search-icon", SearchIcon);
 
 //middleware
-app.use(apolloProvider);
 app.use(store);
 app.use(router);
 app.provide("apollo", apolloClient);
-
 app.mount("#app");

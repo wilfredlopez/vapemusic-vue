@@ -1,6 +1,8 @@
 <template>
   <AppHeader />
-  <router-view />
+  <div class="content">
+    <router-view />
+  </div>
   <br />
   <br />
   <br />
@@ -10,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, ref, watch, provide } from "vue";
+import { defineComponent, inject, ref, watch, provide, computed } from "vue";
 import AudioPlayer from "./components/songs/AudioPlayer.vue";
 import AppHeader from "@/components/layout/AppHeader.vue"; // @ is an alias to /src
 import PageTabs from "@/components/layout/PageTabs.vue";
@@ -20,6 +22,8 @@ import { ApolloClient } from "apollo-boost";
 import { useGetAllSongsQuery } from "@/hooks/useSongsQuery";
 import { ActionTypes } from "@/store/action-types";
 import { GetAllSongsDocument } from "./hooks/useSongsQuery";
+
+const INCREMENTOR = 20;
 
 export default defineComponent({
   name: "App",
@@ -39,23 +43,27 @@ export default defineComponent({
       helpers: { fetchMore }
     } = useGetAllSongsQuery(apollo, { variables: { limit: limit.value } });
 
-    watch(data, () => {
-      const allSongs = data.value.getAllSongs;
-      store.dispatch(ActionTypes.ADD_SONGS_IF_NOT_ACTION, allSongs.songs);
+    const songs = computed(function() {
+      return data.value;
+    });
+
+    watch(songs, newValue => {
+      const allSongs = newValue.getAllSongs;
+      if (allSongs.songs) {
+        store.dispatch(ActionTypes.ADD_SONGS_IF_NOT_ACTION, allSongs.songs);
+      }
     });
 
     if (error.value) {
-      console.log(error);
+      console.log(error.value);
     }
-    // const songs = computed(function() {
-    //   return store.state.music.tracks;
-    // });
 
     function loadMore() {
       fetchMore({
         updateQuery: (existing, updatedData) => {
           if (updatedData.fetchMoreResult) {
             const newSongs = updatedData.fetchMoreResult.getAllSongs;
+            store.dispatch(ActionTypes.ADD_SONGS_IF_NOT_ACTION, newSongs.songs);
             return {
               ...existing,
               getAllSongs: {
@@ -70,11 +78,11 @@ export default defineComponent({
         },
         query: GetAllSongsDocument,
         variables: {
-          limit: limit.value + 20,
+          limit: limit.value + INCREMENTOR,
           skip: limit.value
         }
       }).then(() => {
-        limit.value = limit.value + 20;
+        limit.value = limit.value + INCREMENTOR;
       });
     }
     provide("loadMore", loadMore);
@@ -96,15 +104,63 @@ export default defineComponent({
   --secondary-color-tint: #6967da;
 
   --app-background: #ffffff;
+  --app-text-color: #000;
   --brand-color: #fa4d4d;
   --app-font-family: "Baloo Tamma 2", cursive;
 }
 
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
 html {
   font-family: var(--app-font-family);
+  // overflow: hidden;
+  width: 100%;
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 body {
   margin: 0;
+  background: var(--app-background, #fff);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  position: fixed;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+  touch-action: manipulation;
+  -webkit-user-drag: none;
+  -ms-content-zooming: none;
+  word-wrap: break-word;
+  overscroll-behavior-y: none;
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  text-size-adjust: none;
+  margin: 0;
+  padding: 0;
+}
+.page {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  position: absolute;
+  flex-direction: column;
+  justify-content: space-between;
+  contain: layout size style;
+  overflow: hidden;
+  z-index: 0;
 }
 a {
   text-decoration: none;
@@ -118,6 +174,40 @@ a {
   color: #2c3e50;
 }
 
+// .content {
+//   overflow: scroll;
+//   height: 100vh;
+//   position: absolute;
+//   left: 0;
+//   margin: auto;
+//   right: 0;
+// }
+.content {
+  height: 100vh;
+  --background: var(--app-background, #fff);
+  --color: var(--app-text-color, #000);
+  --padding-top: 0px;
+  --padding-bottom: 0px;
+  --padding-start: 0px;
+  --padding-end: 0px;
+  --keyboard-offset: 0px;
+  --offset-top: 0px;
+  --offset-bottom: 0px;
+  --overflow: auto;
+  display: block;
+  position: relative;
+  flex: 1 1 0%;
+  width: 100%;
+  font-family: var(--ion-font-family, inherit);
+  contain: size style;
+  margin: 0px !important;
+  padding: 0px !important;
+  overflow: scroll;
+}
+
+.content > * {
+  margin-bottom: 6rem;
+}
 .container {
   max-width: 850px;
   margin: 0 auto;

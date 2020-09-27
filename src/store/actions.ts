@@ -42,7 +42,7 @@ export interface Actions {
   ): void;
   [ActionTypes.ADD_SONGS_IF_NOT_ACTION]: ActionResolve<Song[]>;
   [ActionTypes.SET_PLAYER_OPEN_ACTION]: ActionResolve<boolean>;
-  [ActionTypes.PAUSE_ACTION]: ActionResolveNoPayload;
+  [ActionTypes.PAUSE_ACTION]: ActionResolve<boolean>;
   [ActionTypes.TOGGLE_PLAYING_ACTION]: ActionResolveNoPayload;
   [ActionTypes.PLAY_ACTION]: ActionResolve<Song>;
   [ActionTypes.SEEK_ACTION]: ActionResolve<number>;
@@ -67,8 +67,7 @@ export const actions: ActionTree<State, State> & Actions = {
     commit(MutationTypes.SET_PLAYER_OPEN, payload);
   },
   [ActionTypes.ADD_SONGS_IF_NOT_ACTION]({ commit, state }, songs) {
-    const music = getMusic(state, songs);
-    commit(MutationTypes.ADD_SONGS, music);
+    commit(MutationTypes.ADD_SONGS, getMusic(state, songs));
   },
   [ActionTypes.AUDIO_TIME_ACTION]({ commit }, payload) {
     commit(MutationTypes.AUDIO_TIME, payload);
@@ -93,23 +92,30 @@ export const actions: ActionTree<State, State> & Actions = {
     const index = (playing.index + 1) & getters.tracks.length;
     commit(MutationTypes.NEXT, { index });
   },
-  [ActionTypes.PAUSE_ACTION]({ commit }) {
+  [ActionTypes.PAUSE_ACTION]({ commit }, payload = false) {
     //Done !
-    commit(MutationTypes.PAUSE);
+    if (payload) {
+      commit(MutationTypes.SET_PLAYING);
+    } else {
+      commit(MutationTypes.PAUSE);
+    }
   },
   [ActionTypes.PERCENT_PLAYED_ACTION]({ commit }, payload) {
     commit(MutationTypes.PERCENT_PLAYED, payload);
   },
-  [ActionTypes.PLAY_ACTION]({ commit, getters, state }, track) {
+  [ActionTypes.PLAY_ACTION]({ commit, getters }, track) {
     const ct = getters.currentTrack;
-    if (track && track.id !== ct.id) {
+    if (typeof track === "undefined") {
+      console.error(
+        "ACTIONS>PLAY_ACTION expected track to be of type SONG but received undefined."
+      );
+    }
+    if (track.id !== ct.id) {
       const newRecentTracks = getters.recentTracks.filter(
         t => t.id !== track.id
       );
-      //if track comes from search it might not exist.
-      const index = getTrackIndex(state, track.id);
 
-      commit(MutationTypes.PLAY_NEW, { index, newRecentTracks, track });
+      commit(MutationTypes.PLAY_NEW, { newRecentTracks, track });
     } else {
       commit(MutationTypes.SET_PLAYING);
     }

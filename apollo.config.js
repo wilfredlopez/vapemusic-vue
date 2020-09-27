@@ -1,9 +1,9 @@
 module.exports = {
   client: {
     service: {
-      name: "my-app",
+      name: "App",
       // URL to the GraphQL API
-      url: "https://vapemusicclub-one.now.sh/graphql"
+      url: "http://localhost:5000/graphql"
     },
     // Files processed by the extension
     includes: ["src/**/*.vue", "src/**/*.js"]

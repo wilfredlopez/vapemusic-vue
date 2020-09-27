@@ -57,7 +57,7 @@ export const getters: GetterTree<State, State> & Getters = {
   },
 
   currentTrack(state: State) {
-    return state.music.tracks[state.playing ? state.playing.index || 0 : 0];
+    return state.music.tracks[state.playing.index];
   },
 
   user(state: State) {
