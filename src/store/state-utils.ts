@@ -1,6 +1,7 @@
 import { Song } from "@/models/Song.model";
 import { Storage } from "../utils/Storage";
 import { State } from "./state";
+export const ALL_TRACKS_LOCAL_STORAGE_KEY = "ALL-CACHED-TRACKS-VUE";
 export const FAV_TRACKS_LOCAL_STORAGE_KEY = "USER-FAV-TRACKS-VUE";
 export const RECENT_TRACKS_LOCAL_STORAGE_KEY = "USER-RECENT-TRACKS-VUE";
 
@@ -8,9 +9,11 @@ export const RECENT_TRACKS_LOCAL_STORAGE_KEY = "USER-RECENT-TRACKS-VUE";
 export async function getLocalStorageTracks() {
   let favTracks: Song[] = [];
   let recentTracks: Song[] = [];
+  let cacheTracks: Song[] = [];
   const savedFavs = await Storage.getObject<Song[]>({
     key: FAV_TRACKS_LOCAL_STORAGE_KEY
   });
+
   const savedRecent = await Storage.getObject<Song[]>({
     key: RECENT_TRACKS_LOCAL_STORAGE_KEY
   });
@@ -20,14 +23,29 @@ export async function getLocalStorageTracks() {
   if (savedRecent && savedRecent.length > 0) {
     recentTracks = savedRecent;
   }
+
+  const savedCachedTracks = await Storage.getObject<Song[]>({
+    key: ALL_TRACKS_LOCAL_STORAGE_KEY
+  });
+  if (savedCachedTracks) {
+    cacheTracks = savedCachedTracks;
+  }
   return {
     favTracks,
-    recentTracks
+    recentTracks,
+    cacheTracks
   };
 }
 export function setLocalStorageRecentTracks(tracks: Song[]) {
   Storage.setObject({
     key: RECENT_TRACKS_LOCAL_STORAGE_KEY,
+    value: JSON.stringify(tracks)
+  });
+}
+
+export function setLocalStorageAllTracks(tracks: Song[]) {
+  Storage.setObject({
+    key: ALL_TRACKS_LOCAL_STORAGE_KEY,
     value: JSON.stringify(tracks)
   });
 }

@@ -66,7 +66,6 @@
   </svg>
 </template>
 
-
 <script lang="ts">
 import { defineComponent } from "vue";
 export default defineComponent({
@@ -74,19 +73,19 @@ export default defineComponent({
     color: {
       type: String,
       required: false,
-      default: "vape",
-    },
-  },
+      default: "vape"
+    }
+  }
 });
 </script>
-
 
 <style scoped>
 svg {
   width: 50px;
-  height: 50px;
-  padding: 0 6px;
+  height: 40px;
+  /* padding: 0 6px; */
   /* filter: invert(1); */
+  display: block;
 }
 
 svg.vape {

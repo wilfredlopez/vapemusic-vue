@@ -20,19 +20,19 @@ export default defineComponent({
     button: {
       type: Boolean,
       required: false,
-      default: false,
+      default: false
     },
     link: {
       type: Boolean,
       required: false,
-      default: false,
+      default: false
     },
     to: {
       type: String,
       required: false,
-      default: "/",
-    },
-  },
+      default: "/"
+    }
+  }
 });
 </script>
 
@@ -101,7 +101,7 @@ export default defineComponent({
   padding-right: var(--padding-end);
   padding-top: var(--padding-top);
   padding-bottom: var(--padding-bottom);
-  font-family: inherit;
+  font-family: var(--app-font-family, inherit);
   font-size: inherit;
   font-style: inherit;
   font-weight: inherit;

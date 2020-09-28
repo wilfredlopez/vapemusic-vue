@@ -3,7 +3,10 @@ import { User } from "@/models/User.model";
 import { MutationTree } from "vuex";
 import { MutationTypes } from "./mutation-types";
 import { State } from "./state";
-import { setLocalStorageRecentTracks } from "./state-utils";
+import {
+  setLocalStorageAllTracks,
+  setLocalStorageRecentTracks
+} from "./state-utils";
 import { getTrackIndex } from "./actions";
 
 // eslint-disable-next-line
@@ -44,6 +47,7 @@ export const mutations: MutationTree<State> & Mutations = {
     state.music.hotTracks = music.hotTracks;
     state.music.newTracks = music.newTracks;
     state.music.tracks = music.tracks;
+    setLocalStorageAllTracks(music.tracks);
   },
   [MutationTypes.SET_PLAYER_OPEN](state, payload) {
     state.ui.playerOpen = payload;
@@ -66,14 +70,15 @@ export const mutations: MutationTree<State> & Mutations = {
       index = tracks.length - 1;
     }
     setLocalStorageRecentTracks([payload.track, ...payload.newRecentTracks]);
-    // state.music.tracks = tracks;
+    setLocalStorageAllTracks(tracks);
+    state.music.tracks = tracks;
     state.ui.playerOpen = true;
     state.user.recentTracks = [payload.track, ...payload.newRecentTracks];
     state.playing.index = index;
-    state.playing.isPlaying = true;
     state.playing.progress = 0;
     state.playing.currentAudioTime = "0";
     state.playing.percentPlayed = 0;
+    state.playing.isPlaying = true;
   },
   [MutationTypes.SEEK](state, time) {
     state.playing.progress = time;

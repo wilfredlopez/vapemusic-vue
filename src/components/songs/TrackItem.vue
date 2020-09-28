@@ -61,7 +61,8 @@ p {
   text-align: left;
 }
 .title {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .artist {

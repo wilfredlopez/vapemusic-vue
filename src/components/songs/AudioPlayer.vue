@@ -7,6 +7,7 @@
       :togglePlaying="togglePlaying"
       :audioTime="audioTime"
       :audioTimeLeft="audioTimeLeft"
+      :seekTo="seekTo"
       @close="handleClosePlayer"
     ></PlayerDialog>
     <teleport to="body">
@@ -60,10 +61,10 @@ export default defineComponent({
       return store.state.ui.playerOpen;
     });
     const currentTrack = computed(function () {
-      return store.getters.currentTrack;
+      return store.getters.currentTrack || {};
     });
     const audioUrl = computed(function () {
-      return currentTrack.value.audioUrl;
+      return currentTrack.value?.audioUrl || "";
     });
     const isPlaying = computed(function () {
       return store.getters.playingState.isPlaying;
@@ -77,7 +78,11 @@ export default defineComponent({
     });
 
     watch(currentTrack, (newval, oldvalue) => {
-      if (newval.audioUrl !== oldvalue.audioUrl) {
+      if (
+        newval.audioUrl !== oldvalue.audioUrl &&
+        oldvalue.audioUrl !== undefined &&
+        oldvalue.audioUrl !== ""
+      ) {
         store.dispatch(ActionTypes.PLAY_ACTION, currentTrack.value);
       }
     });
@@ -87,6 +92,10 @@ export default defineComponent({
     });
 
     watch(state.percentPlayed, (newValue) => {
+      //autoplay next if % played reaches end.
+      if (newValue >= 99.5) {
+        store.dispatch(ActionTypes.NEXT_ACTION);
+      }
       store.dispatch(ActionTypes.PERCENT_PLAYED_ACTION, newValue);
     });
 
@@ -110,11 +119,23 @@ export default defineComponent({
       store.dispatch(ActionTypes.SET_PLAYER_OPEN_ACTION, false);
     }
     function toggleOpenPlayer() {
+      // IF player is closed and music is not playing?
+      //Open the player and play music.
+      if (!isPlaying.value && !playerOpen.value) {
+        store.dispatch(ActionTypes.SET_PLAYER_OPEN_ACTION, true);
+        store.dispatch(ActionTypes.PAUSE_ACTION, true);
+        return;
+      }
+      //IF player is open? open if is playing or close it if not.
       if (isPlaying.value) {
         store.dispatch(ActionTypes.SET_PLAYER_OPEN_ACTION, true);
       } else {
         handleClosePlayer();
       }
+    }
+
+    function seekTo(to: number) {
+      controls.seek(to);
     }
 
     return {
@@ -128,6 +149,7 @@ export default defineComponent({
       audioTime,
       audioTimeLeft,
       toggleOpenPlayer,
+      seekTo,
     };
   },
 });

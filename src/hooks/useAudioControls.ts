@@ -150,10 +150,10 @@ export default function useAudioControls({
   const controls = {
     play: async () => {
       const eleme = audioEl.value;
-      pausedState.value = false;
       if (!eleme) {
         return;
       }
+      pausedState.value = false;
 
       if (!lockPlay.value) {
         const promise = eleme.play();
@@ -164,7 +164,10 @@ export default function useAudioControls({
           const resetLock = () => {
             lockPlay.value = false;
           };
-          promise.then(resetLock, resetLock);
+          promise.then(resetLock, resetLock).catch(e => {
+            //eslint-disable-next-line
+            console.log("Error in play promise: ", e);
+          });
         }
         return promise;
       }
@@ -177,11 +180,11 @@ export default function useAudioControls({
     },
     pause: async () => {
       const el = audioEl.value;
-      pausedState.value = true;
       // if (el && !lockPlay.value) {
       //   return el.pause();
       // }
       if (el) {
+        pausedState.value = true;
         el.pause();
       }
     },

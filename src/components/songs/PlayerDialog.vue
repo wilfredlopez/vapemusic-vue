@@ -23,31 +23,7 @@
             <p class="title">{{ currentTrack.title }}</p>
             <p class="artist">{{ currentTrack.artist }}</p>
           </div>
-          <div class="track-progress">
-            <div class="progress-container">
-              <div class="range-slider">
-                <div class="range-bar" role="presentation" part="bar"></div>
-                <div
-                  class="range-bar range-bar-active"
-                  role="presentation"
-                  part="bar-active"
-                  :style="{ right: `${100 - percentPlayed}%`, left: '0%' }"
-                ></div>
-                <div
-                  class="range-knob-handle range-knob-a"
-                  role="slider"
-                  tabindex="0"
-                  aria-valuemin="0"
-                  aria-valuemax="100"
-                  aria-valuenow="8"
-                  :style="{ left: `${percentPlayed}%` }"
-                >
-                  <div class="range-knob" role="presentation" part="knob"></div>
-                </div>
-              </div>
-              <input type="hidden" class="aux-input" name="" value="8" />
-            </div>
-          </div>
+          <TrackProgress :seekTo="seekTo" :value="percentPlayed" />
           <div class="track-progress-time">
             <div class="track-progress-time-current">{{ audioTime }}</div>
             <div class="track-progress-time-left">{{ audioTimeLeft }}</div>
@@ -131,9 +107,15 @@
   </teleport>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from "vue";
 import { ActionTypes } from "@/store/action-types";
-export default {
+import { Song } from "@/models/Song.model";
+import TrackProgress from "../UI/TrackProgress.vue";
+export default defineComponent({
+  components: {
+    TrackProgress,
+  },
   props: {
     show: {
       type: Boolean,
@@ -151,15 +133,19 @@ export default {
     togglePlaying: {
       type: Function,
     },
+    seekTo: {
+      type: Function,
+      required: true,
+    },
     audioTime: {
       type: String,
       required: false,
-      default: "0:00",
+      default: `0:00`,
     },
     audioTimeLeft: {
       type: String,
       required: false,
-      default: "0:00",
+      default: `0:00`,
     },
   },
   emits: ["close"],
@@ -181,16 +167,16 @@ export default {
     },
   },
   computed: {
-    percentPlayed() {
-      return this.$store.getters.playingState.percentPlayed;
+    percentPlayed(): number {
+      return Math.floor(this.$store.getters.playingState.percentPlayed);
     },
-    currentTrack() {
+    currentTrack(): Song {
       return this.$store.getters.currentTrack;
     },
-    isPlaying() {
+    isPlaying(): boolean {
       return this.$store.getters.playingState.isPlaying;
     },
-    isFavorite() {
+    isFavorite(): boolean {
       return (
         typeof this.$store.getters.favTracks.find(
           (t) => t.id === this.currentTrack.id
@@ -198,82 +184,10 @@ export default {
       );
     },
   },
-};
+});
 </script>
 
 <style scoped>
-.track-progress {
-  margin-bottom: 1rem;
-}
-
-.progress-container {
-  padding-inline-start: 0px;
-  padding-inline-end: 0px;
-  display: flex;
-  position: relative;
-  flex: 3 1 0%;
-  align-items: center;
-  user-select: none;
-  z-index: 2;
-}
-
-.range-slider {
-  position: relative;
-  flex: 1 1 0%;
-  width: 100%;
-  height: 40px;
-  contain: size layout style;
-  cursor: grab;
-  touch-action: pan-y;
-}
-.range-bar {
-  border-radius: 3px;
-  left: 0px;
-  top: calc((30px - 20px) / 2);
-  position: absolute;
-  width: 100%;
-  height: 20px;
-  /* background: rgb(112, 250, 216); */
-  background: rgba(255, 0, 0, 0.514);
-  pointer-events: none;
-}
-.range-bar-active {
-  bottom: 0px;
-  width: auto;
-  background: var(--main-color);
-  /* background: rgba(0, 0, 0, 0.4); */
-}
-
-.range-knob-handle:active,
-.range-knob-handle:focus {
-  outline: none;
-}
-
-.range-knob-handle {
-  margin-left: unset;
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  margin-inline-start: calc(0px - 30px / 2);
-}
-.range-knob {
-  transform: scale(0.67);
-  transition-duration: 120ms;
-  transition-property: transform, background-color, border, -webkit-transform;
-  transition-timing-function: ease;
-  z-index: 2;
-  border-radius: 50%;
-  left: calc(50% - 25px / 2);
-  top: calc(50% - 25px / 2);
-  position: absolute;
-  width: 25px;
-  height: 25px;
-  background: rgb(255, 255, 255);
-  box-shadow: var(--knob-box-shadow);
-  pointer-events: none;
-}
-
 .track-progress-time {
   display: flex;
   margin-top: 5px;
@@ -294,13 +208,6 @@ export default {
 
   display: block;
   fill: currentColor;
-}
-
-.track-preview-progress-current {
-  height: 20px;
-  color: green;
-  background: green;
-  z-index: 200000;
 }
 
 .favorite {
@@ -334,6 +241,7 @@ dialog {
   top: 7vh;
   left: 10%;
   width: 80%;
+  height: auto;
   z-index: 1002;
   border-radius: 12px;
   border: none;
@@ -342,6 +250,16 @@ dialog {
   margin: 0;
   overflow: hidden;
   background-color: white;
+}
+
+@media only screen and (min-device-width: 375px) and (max-device-width: 812px) and (orientation: landscape) {
+  dialog {
+    top: 0vh;
+    height: 100vh;
+    left: 5%;
+    width: 90%;
+    overflow: scroll;
+  }
 }
 
 .dialog-enter-from,

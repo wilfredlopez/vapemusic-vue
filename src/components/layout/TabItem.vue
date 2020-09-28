@@ -47,7 +47,7 @@ export default defineComponent({
   padding-right: 12px;
   padding-top: 6px;
   padding-bottom: 6px;
-  font-family: inherit;
+  font-family: var(--app-font-family, inherit);
   font-size: inherit;
   font-style: inherit;
   font-weight: inherit;

@@ -1,20 +1,12 @@
 <template>
   <AppHeader />
-  <div class="content">
+  <div :class="CONTENT_ELEMENT_CLASS">
     <router-view v-slot="{ Component }">
       <keep-alive>
         <component :is="Component" />
       </keep-alive>
     </router-view>
   </div>
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
   <AudioPlayer />
   <PageTabs />
 </template>
@@ -30,7 +22,7 @@ import { ApolloClient } from "apollo-boost";
 import { useGetAllSongsQuery } from "@/hooks/useSongsQuery";
 import { ActionTypes } from "@/store/action-types";
 import { GetAllSongsDocument } from "./hooks/useSongsQuery";
-
+import { CONTENT_ELEMENT_CLASS } from "@/config";
 const INCREMENTOR = 20;
 
 export default defineComponent({
@@ -46,10 +38,15 @@ export default defineComponent({
     //eslint-disable-next-line
     const apollo = inject("apollo") as ApolloClient<any>;
     const limit = ref(31);
+    const skip = computed(function() {
+      return store.getters.tracks.length;
+    });
     const {
       result: { data, error, loading },
       helpers: { fetchMore }
-    } = useGetAllSongsQuery(apollo, { variables: { limit: limit.value } });
+    } = useGetAllSongsQuery(apollo, {
+      variables: { limit: limit.value, skip: skip.value }
+    });
 
     const songs = computed(function() {
       return data.value;
@@ -68,6 +65,9 @@ export default defineComponent({
     }
 
     function loadMore() {
+      const contentEl = document.querySelector(`.${CONTENT_ELEMENT_CLASS}`);
+      const scroolPos = contentEl?.scrollTop || 0;
+
       fetchMore({
         updateQuery: (existing, updatedData) => {
           if (updatedData.fetchMoreResult) {
@@ -88,14 +88,22 @@ export default defineComponent({
         query: GetAllSongsDocument,
         variables: {
           limit: limit.value + INCREMENTOR,
-          skip: limit.value
+          skip: skip.value
         }
       }).then(() => {
+        if (contentEl) {
+          contentEl.scrollTo({
+            top: scroolPos
+          });
+        }
         limit.value = limit.value + INCREMENTOR;
       });
     }
     provide("loadMore", loadMore);
     provide("loading", loading);
+    return {
+      CONTENT_ELEMENT_CLASS
+    };
   },
   apolloProvider
 });
@@ -186,44 +194,39 @@ a {
   padding: 0;
 }
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--app-font-family, inherit);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
 }
 
-// .content {
-//   overflow: scroll;
-//   height: 100vh;
-//   position: absolute;
-//   left: 0;
-//   margin: auto;
-//   right: 0;
-// }
+//CONTENT_ELEMENT_CLASS
 .content {
-  height: 100vh;
   --background: var(--app-background, #fff);
   --color: var(--app-text-color, #000);
   --padding-top: 0px;
-  --padding-bottom: 0px;
+  --padding-bottom: 57px;
   --padding-start: 0px;
   --padding-end: 0px;
   --keyboard-offset: 0px;
   --offset-top: 0px;
   --offset-bottom: 0px;
   --overflow: auto;
+  height: 100vh;
   display: block;
   position: relative;
   flex: 1 1 0%;
   width: 100%;
-  font-family: var(--ion-font-family, inherit);
+  font-family: var(--app-font-family, inherit);
   contain: size style;
   margin: 0px !important;
-  padding: 0px !important;
+  padding: 0 !important;
+  padding-bottom: var(--padding-bottom, 0) !important;
   overflow: scroll;
 }
 
+//CONTENT_ELEMENT_CLASS
 .content > * {
   margin-bottom: 6rem;
 }

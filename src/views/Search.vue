@@ -29,7 +29,6 @@
   </div>
 </template>
 
-
 <script lang="ts">
 import { computed, defineComponent, inject, ref } from "vue";
 import { useSearchSongsLazyQuery } from "../hooks/useSearchSongs";
@@ -38,7 +37,7 @@ import { Song } from "@/models/Song.model";
 import SongItem from "@/components/songs/SongItem.vue";
 export default defineComponent({
   components: {
-    SongItem,
+    SongItem
   },
   setup() {
     // eslint-disable-next-line
@@ -47,18 +46,18 @@ export default defineComponent({
     const [
       execQuery,
       {
-        result: { data, loading },
-      },
+        result: { data, loading }
+      }
     ] = useSearchSongsLazyQuery(apollo);
 
     function search() {
       execQuery({
         query: query.value,
-        limit: 20,
+        limit: 20
       });
     }
 
-    const result = computed(function () {
+    const result = computed(function() {
       if (data && data.value && data.value.searchSongs) {
         return data.value.searchSongs.songs;
       }
@@ -69,12 +68,11 @@ export default defineComponent({
       search,
       query,
       result,
-      loading,
+      loading
     };
-  },
+  }
 });
 </script>
-
 
 <style lang="scss" scoped>
 .song-grid-container {
@@ -90,7 +88,7 @@ export default defineComponent({
 .search-form {
   position: fixed;
   left: 0;
-  top: 64px;
+  top: 50px;
   right: 0;
 }
 .results {
@@ -123,7 +121,7 @@ export default defineComponent({
     font-size: 16px;
     font-weight: 400;
     line-height: 30px;
-    font-family: inherit;
+    font-family: var(--app-font-family, inherit);
     font-style: inherit;
     letter-spacing: inherit;
     text-decoration: inherit;
