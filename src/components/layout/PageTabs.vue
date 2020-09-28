@@ -49,10 +49,11 @@
 <style lang="scss" scoped>
 .tabs {
   position: fixed;
-  bottom: 57px;
+  bottom: 0px;
   width: 100%;
   z-index: 1000;
   contain: layout size style;
+  height: 57px;
 }
 
 .icon {
