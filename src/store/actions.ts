@@ -89,7 +89,7 @@ export const actions: ActionTree<State, State> & Actions = {
   },
   [ActionTypes.NEXT_ACTION]({ commit, getters }) {
     const playing = getters.playingState;
-    const index = (playing.index + 1) & getters.tracks.length;
+    const index = (playing.index + 1) % getters.tracks.length;
     commit(MutationTypes.NEXT, { index });
   },
   [ActionTypes.PAUSE_ACTION]({ commit }, payload = false) {

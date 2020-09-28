@@ -2,10 +2,8 @@
   <div class="container">
     <div class="songs-list">
       <h1>New Music</h1>
-      <div v-if="loading">
-        Loading...
-      </div>
-      <ul>
+      <div v-if="loading">Loading...</div>
+      <ul class="song-grid">
         <SongItem v-for="song in songs" :key="song.id" :song="song" />
       </ul>
       <br />
@@ -28,12 +26,12 @@ import { useStore } from "@/store";
 export default defineComponent({
   name: "SongsList",
   components: {
-    SongItem
+    SongItem,
   },
   setup() {
     const store = useStore();
 
-    const songs = computed(function() {
+    const songs = computed(function () {
       return store.state.music.tracks;
     });
 
@@ -43,9 +41,9 @@ export default defineComponent({
       songs,
       loading,
       // error,
-      loadMore
+      loadMore,
     };
-  }
+  },
 });
 </script>
 

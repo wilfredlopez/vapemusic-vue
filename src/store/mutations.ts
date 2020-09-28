@@ -83,7 +83,11 @@ export const mutations: MutationTree<State> & Mutations = {
     state.playing.progress = 0;
   },
   [MutationTypes.PREV](state) {
-    state.playing.index = Math.max(0, state.playing.index - 1);
+    if (state.playing.index === 0) {
+      state.playing.index = state.music.tracks.length - 1;
+    } else {
+      state.playing.index = Math.max(0, state.playing.index - 1);
+    }
     state.playing.progress = 0;
   },
   [MutationTypes.FAV](state, favs) {

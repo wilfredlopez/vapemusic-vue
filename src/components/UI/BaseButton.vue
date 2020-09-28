@@ -1,5 +1,10 @@
 <template>
-  <button v-if="!link" :class="mode">
+  <button
+    v-if="!link"
+    :class="{ [mode]: mode, shadow: shadow }"
+    :title="label"
+    :aria-label="label"
+  >
     <slot></slot>
   </button>
   <router-link v-else :to="to" :class="mode">
@@ -13,19 +18,29 @@ export default {
     mode: {
       type: String, // 'flat' | 'outline'
       required: false,
-      default: null
+      default: null,
+    },
+    shadow: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
     link: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
+    },
+    label: {
+      type: String,
+      required: false,
+      default: "",
     },
     to: {
       type: String,
       required: false,
-      default: "/"
-    }
-  }
+      default: "/",
+    },
+  },
 };
 </script>
 
@@ -44,9 +59,36 @@ a {
   display: inline-block;
   outline: none;
   box-sizing: border-box;
+}
+.shadow {
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
 }
+button[primary] {
+  background: var(--main-color, blue);
+  color: var(--main-color-constrast, red);
+}
 
+button[secondary] {
+  background: var(--secondary-color, blue);
+  color: var(--secondary-color-contrast, red);
+}
+button[transparent] {
+  background: transparent;
+  color: var(--main-color-contrast, rgb(255, 255, 255));
+  border-color: transparent;
+}
+button[transparent]:hover {
+  background: rgb(0 0 0 / 12%) !important;
+  color: var(--main-color-contrast, rgb(255, 255, 255)) !important;
+  border-color: transparent !important;
+}
+button[circular] {
+  border-radius: 50%;
+}
+
+button[small] {
+  padding: 0.1rem 0.5rem;
+}
 a:hover,
 a:active,
 button:hover,
@@ -83,6 +125,7 @@ button:active {
 .outline:hover,
 .outline:active {
   /* background-color: #e5edff; */
-  background-color: var(--main-color-shade, #2e034b);
+  background-color: var(--main-color-tint, #2e034b);
+  color: var(--main-color-contrast);
 }
 </style>
