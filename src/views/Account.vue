@@ -75,7 +75,6 @@
   </div>
 </template>
 
-
 <script lang="ts">
 import { Song } from "@/models/Song.model";
 import { ActionTypes } from "@/store/action-types";
@@ -88,7 +87,7 @@ export default defineComponent({
     },
     removeFavorite(song: Song) {
       this.$store.dispatch(ActionTypes.FAV_ACTION, song);
-    },
+    }
   },
   computed: {
     recentTracks() {
@@ -96,11 +95,10 @@ export default defineComponent({
     },
     favorites() {
       return this.$store.getters.favTracks;
-    },
-  },
+    }
+  }
 });
 </script>
-
 
 <style lang="scss" scoped>
 .icon {
@@ -108,7 +106,7 @@ export default defineComponent({
   stroke: #9c9c9c;
   display: block;
   height: 100%;
-  width: 60px;
+  width: 35px;
   fill: none;
   transform-origin: 0px 0px;
   font-size: 24px;
@@ -140,11 +138,12 @@ img {
 .header {
   padding: 0 20px;
   h2 {
-    font-size: 16px;
+    font-size: 0.96rem;
     margin: 0;
   }
   h3 {
-    font-size: 12px;
+    font-size: 0.75rem;
+    font-weight: 100;
     margin: 0;
   }
 }

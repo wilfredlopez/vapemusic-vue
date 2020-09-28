@@ -11,97 +11,93 @@
   <br />
   <br />
   <br />
+  <br />
+  <br />
+  <br />
+  <br />
   <AudioPlayer />
   <PageTabs />
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  // inject,
-  ref,
-  // watch,
-  provide,
-  //  computed
-} from "vue";
+import { defineComponent, inject, ref, watch, provide, computed } from "vue";
 import AudioPlayer from "./components/songs/AudioPlayer.vue";
 import AppHeader from "@/components/layout/AppHeader.vue"; // @ is an alias to /src
 import PageTabs from "@/components/layout/PageTabs.vue";
 import { apolloProvider } from "./apollo";
-// import { useStore } from "./store";
-// import { ApolloClient } from "apollo-boost";
-// import { useGetAllSongsQuery } from "@/hooks/useSongsQuery";
-// import { ActionTypes } from "@/store/action-types";
-// import { GetAllSongsDocument } from "./hooks/useSongsQuery";
+import { useStore } from "./store";
+import { ApolloClient } from "apollo-boost";
+import { useGetAllSongsQuery } from "@/hooks/useSongsQuery";
+import { ActionTypes } from "@/store/action-types";
+import { GetAllSongsDocument } from "./hooks/useSongsQuery";
 
-// const INCREMENTOR = 20;
+const INCREMENTOR = 20;
 
 export default defineComponent({
   name: "App",
   components: {
     AppHeader,
     AudioPlayer,
-    PageTabs,
+    PageTabs
   },
   setup() {
-    // const store = useStore();
+    const store = useStore();
 
     //eslint-disable-next-line
-    // const apollo = inject("apollo") as ApolloClient<any>;
-    // const limit = ref(31);
-    // const {
-    //   result: { data, error, loading },
-    //   helpers: { fetchMore }
-    // } = useGetAllSongsQuery(apollo, { variables: { limit: limit.value } });
+    const apollo = inject("apollo") as ApolloClient<any>;
+    const limit = ref(31);
+    const {
+      result: { data, error, loading },
+      helpers: { fetchMore }
+    } = useGetAllSongsQuery(apollo, { variables: { limit: limit.value } });
 
-    // const songs = computed(function() {
-    //   return data.value;
-    // });
+    const songs = computed(function() {
+      return data.value;
+    });
 
-    // watch(songs, newValue => {
-    //   const allSongs = newValue.getAllSongs;
-    //   if (allSongs.songs) {
-    //     store.dispatch(ActionTypes.ADD_SONGS_IF_NOT_ACTION, allSongs.songs);
-    //   }
-    // });
+    watch(songs, newValue => {
+      const allSongs = newValue.getAllSongs;
+      if (allSongs.songs) {
+        store.dispatch(ActionTypes.ADD_SONGS_IF_NOT_ACTION, allSongs.songs);
+      }
+    });
 
-    // if (error.value) {
-    //   console.log(error.value);
-    // }
+    if (error.value) {
+      //eslint-disable-next-line
+      console.log(error.value);
+    }
 
     function loadMore() {
-      console.log("THIS IS TEMPORARLY COMMENTED.");
-      // fetchMore({
-      //   updateQuery: (existing, updatedData) => {
-      //     if (updatedData.fetchMoreResult) {
-      //       const newSongs = updatedData.fetchMoreResult.getAllSongs;
-      //       store.dispatch(ActionTypes.ADD_SONGS_IF_NOT_ACTION, newSongs.songs);
-      //       return {
-      //         ...existing,
-      //         getAllSongs: {
-      //           ...existing.getAllSongs,
-      //           totalCount:
-      //             existing.getAllSongs.totalCount + newSongs.totalCount,
-      //           songs: [...existing.getAllSongs.songs, ...newSongs.songs]
-      //         }
-      //       };
-      //     }
-      //     return existing;
-      //   },
-      //   query: GetAllSongsDocument,
-      //   variables: {
-      //     limit: limit.value + INCREMENTOR,
-      //     skip: limit.value
-      //   }
-      // }).then(() => {
-      //   limit.value = limit.value + INCREMENTOR;
-      // });
+      fetchMore({
+        updateQuery: (existing, updatedData) => {
+          if (updatedData.fetchMoreResult) {
+            const newSongs = updatedData.fetchMoreResult.getAllSongs;
+            store.dispatch(ActionTypes.ADD_SONGS_IF_NOT_ACTION, newSongs.songs);
+            return {
+              ...existing,
+              getAllSongs: {
+                ...existing.getAllSongs,
+                totalCount:
+                  existing.getAllSongs.totalCount + newSongs.totalCount,
+                songs: [...existing.getAllSongs.songs, ...newSongs.songs]
+              }
+            };
+          }
+          return existing;
+        },
+        query: GetAllSongsDocument,
+        variables: {
+          limit: limit.value + INCREMENTOR,
+          skip: limit.value
+        }
+      }).then(() => {
+        limit.value = limit.value + INCREMENTOR;
+      });
     }
-    const loading = ref(false);
     provide("loadMore", loadMore);
     provide("loading", loading);
   },
-  apolloProvider,
+  apolloProvider
 });
 </script>
 

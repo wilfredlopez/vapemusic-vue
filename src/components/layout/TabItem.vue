@@ -9,11 +9,10 @@
   </div>
 </template>
 
-
 <script lang="ts">
 import { defineComponent } from "vue";
 export default defineComponent({
-  props: ["to"],
+  props: ["to"]
 });
 </script>
 
@@ -37,6 +36,9 @@ export default defineComponent({
 }
 
 .tab-item {
+  align-self: center;
+  justify-content: center;
+  align-items: center;
   padding-inline-start: 16px;
   padding-inline-end: 16px;
   border-radius: inherit;
@@ -59,8 +61,6 @@ export default defineComponent({
   display: flex;
   position: relative;
   flex-direction: inherit;
-  align-items: inherit;
-  justify-content: inherit;
   width: 100%;
   height: 100%;
   border: 0px;

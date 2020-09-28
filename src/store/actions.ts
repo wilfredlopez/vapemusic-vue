@@ -106,6 +106,7 @@ export const actions: ActionTree<State, State> & Actions = {
   [ActionTypes.PLAY_ACTION]({ commit, getters }, track) {
     const ct = getters.currentTrack;
     if (typeof track === "undefined") {
+      //eslint-disable-next-line
       console.error(
         "ACTIONS>PLAY_ACTION expected track to be of type SONG but received undefined."
       );
