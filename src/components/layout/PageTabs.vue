@@ -3,7 +3,7 @@
     <div class="tabs">
       <div class="tabs-container">
         <div class="tabs-inner">
-          <tab-item to="/">
+          <tab-item to="/app/browse">
             <template v-slot:icon>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -22,19 +22,19 @@
 
             Home
           </tab-item>
-          <tab-item to="/search">
+          <tab-item to="/app/search">
             <template v-slot:icon>
               <search-icon></search-icon>
             </template>
             Search
           </tab-item>
-          <tab-item to="/account">
+          <tab-item to="/app/account">
             <template v-slot:icon>
               <profile-icon></profile-icon>
             </template>
             Your Library
           </tab-item>
-          <tab-item to="/about">
+          <tab-item to="/app/about">
             <template v-slot:icon>
               <info-icon></info-icon>
             </template>
@@ -85,7 +85,7 @@ import { defineComponent } from "vue";
 import TabItem from "./TabItem.vue";
 export default defineComponent({
   components: {
-    TabItem
-  }
+    TabItem,
+  },
 });
 </script>

@@ -1,7 +1,10 @@
 <template>
   <div class="home">
-    <HotTracks />
-    <SongsList />
+    <router-view v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
     <br />
     <br />
     <br />
@@ -12,14 +15,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import SongsList from "@/components/songs/SongsList.vue";
-import HotTracks from "@/components/songs/HotTracks.vue";
 export default defineComponent({
   name: "Home",
-
-  components: {
-    SongsList,
-    HotTracks
-  }
 });
 </script>

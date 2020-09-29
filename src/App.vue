@@ -1,11 +1,7 @@
 <template>
   <AppHeader />
   <div :class="CONTENT_ELEMENT_CLASS">
-    <router-view v-slot="{ Component }">
-      <keep-alive>
-        <component :is="Component" />
-      </keep-alive>
-    </router-view>
+    <router-view></router-view>
   </div>
   <AudioPlayer />
   <PageTabs />
@@ -30,7 +26,7 @@ export default defineComponent({
   components: {
     AppHeader,
     AudioPlayer,
-    PageTabs
+    PageTabs,
   },
   setup() {
     const store = useStore();
@@ -38,21 +34,21 @@ export default defineComponent({
     //eslint-disable-next-line
     const apollo = inject("apollo") as ApolloClient<any>;
     const limit = ref(31);
-    const skip = computed(function() {
+    const skip = computed(function () {
       return store.getters.tracks.length;
     });
     const {
       result: { data, error, loading },
-      helpers: { fetchMore }
+      helpers: { fetchMore },
     } = useGetAllSongsQuery(apollo, {
-      variables: { limit: limit.value, skip: skip.value }
+      variables: { limit: limit.value, skip: skip.value },
     });
 
-    const songs = computed(function() {
+    const songs = computed(function () {
       return data.value;
     });
 
-    watch(songs, newValue => {
+    watch(songs, (newValue) => {
       const allSongs = newValue.getAllSongs;
       if (allSongs.songs) {
         store.dispatch(ActionTypes.ADD_SONGS_IF_NOT_ACTION, allSongs.songs);
@@ -79,8 +75,8 @@ export default defineComponent({
                 ...existing.getAllSongs,
                 totalCount:
                   existing.getAllSongs.totalCount + newSongs.totalCount,
-                songs: [...existing.getAllSongs.songs, ...newSongs.songs]
-              }
+                songs: [...existing.getAllSongs.songs, ...newSongs.songs],
+              },
             };
           }
           return existing;
@@ -88,12 +84,12 @@ export default defineComponent({
         query: GetAllSongsDocument,
         variables: {
           limit: limit.value + INCREMENTOR,
-          skip: skip.value
-        }
+          skip: skip.value,
+        },
       }).then(() => {
         if (contentEl) {
           contentEl.scrollTo({
-            top: scroolPos
+            top: scroolPos,
           });
         }
         limit.value = limit.value + INCREMENTOR;
@@ -102,10 +98,10 @@ export default defineComponent({
     provide("loadMore", loadMore);
     provide("loading", loading);
     return {
-      CONTENT_ELEMENT_CLASS
+      CONTENT_ELEMENT_CLASS,
     };
   },
-  apolloProvider
+  apolloProvider,
 });
 </script>
 
