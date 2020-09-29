@@ -21,6 +21,9 @@
         </div>
       </div>
     </form>
+    <div v-if="loading" class="spinner-content">
+      <rotate-spinner />
+    </div>
     <div v-if="result.length > 0" class="song-grid-container">
       <ul class="song-grid">
         <SongItem v-for="song of result" :key="song.id" :song="song" />
@@ -35,9 +38,10 @@ import { useSearchSongsLazyQuery } from "../hooks/useSearchSongs";
 import { ApolloClient } from "apollo-boost";
 import { Song } from "@/models/Song.model";
 import SongItem from "@/components/songs/SongItem.vue";
+
 export default defineComponent({
   components: {
-    SongItem
+    SongItem,
   },
   setup() {
     // eslint-disable-next-line
@@ -46,18 +50,18 @@ export default defineComponent({
     const [
       execQuery,
       {
-        result: { data, loading }
-      }
+        result: { data, loading },
+      },
     ] = useSearchSongsLazyQuery(apollo);
 
     function search() {
       execQuery({
         query: query.value,
-        limit: 20
+        limit: 20,
       });
     }
 
-    const result = computed(function() {
+    const result = computed(function () {
       if (data && data.value && data.value.searchSongs) {
         return data.value.searchSongs.songs;
       }
@@ -68,9 +72,9 @@ export default defineComponent({
       search,
       query,
       result,
-      loading
+      loading,
     };
-  }
+  },
 });
 </script>
 
@@ -88,7 +92,7 @@ export default defineComponent({
 .search-form {
   position: fixed;
   left: 0;
-  top: 50px;
+  top: 47px;
   right: 0;
 }
 .results {

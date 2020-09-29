@@ -2,12 +2,16 @@
   <div class="container">
     <div class="songs-list">
       <h1>New Music</h1>
-      <div v-if="loading">Loading...</div>
+      <div v-if="loading" class="spinner-content">
+        <rotate-spinner />
+      </div>
       <ul class="song-grid">
         <SongItem v-for="song in songs" :key="song.id" :song="song" />
       </ul>
       <br />
-      <base-button @click="loadMore">Load More</base-button>
+      <base-button :disabled="!enableLoadMore" @click="loadMore"
+        >Load More</base-button
+      >
       <br />
     </div>
   </div>
@@ -16,6 +20,7 @@
 <script lang="ts">
 import { defineComponent, computed, inject } from "vue";
 import SongItem from "@/components/songs/SongItem.vue";
+
 import { useStore } from "@/store";
 // import { useStore } from "vuex";
 // import { useGetAllSongsQuery } from "@/hooks/useSongsQuery";
@@ -36,12 +41,14 @@ export default defineComponent({
     });
 
     const loadMore = inject("loadMore");
+    const enableLoadMore = inject("enableLoadMore");
     const loading = inject("loading");
     return {
       songs,
       loading,
       // error,
       loadMore,
+      enableLoadMore,
     };
   },
 });

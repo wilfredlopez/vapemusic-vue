@@ -16,6 +16,7 @@ import SearchIcon from "@/components/icons/SearchIcon.vue";
 import DownArrowIcon from "@/components/icons/DownArrowIcon.vue";
 import BaseList from "@/components/UI/BaseList.vue";
 import ListItem from "@/components/UI/ListItem.vue";
+import RotateSpinner from "@/components/UI/RotateSpinner.vue";
 import { apolloClient } from "./apollo";
 
 // Before you create app
@@ -34,7 +35,7 @@ app.component("base-spinner", BaseSpinner);
 app.component("base-dialog", BaseDialog);
 app.component("base-list", BaseList);
 app.component("list-item", ListItem);
-
+app.component("rotate-spinner", RotateSpinner);
 //logos and icons
 app.component("vape-music-logo", VapeMusicLogo);
 app.component("home-icon", HomeIcon);

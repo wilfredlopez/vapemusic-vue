@@ -1,6 +1,7 @@
 <template>
   <button
     v-if="!link"
+    :disabled="disabled"
     :class="{ [mode]: mode, shadow: shadow }"
     :title="label"
     :aria-label="label"
@@ -19,6 +20,11 @@ export default {
       type: String, // 'flat' | 'outline'
       required: false,
       default: null,
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     shadow: {
       type: Boolean,
@@ -84,6 +90,10 @@ button[transparent]:hover {
 }
 button[circular] {
   border-radius: 50%;
+}
+
+button:disabled {
+  filter: brightness(0.7);
 }
 
 button[small] {

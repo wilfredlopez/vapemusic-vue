@@ -1,7 +1,7 @@
 <template>
   <AppHeader />
   <div v-show="loading" class="spinner-content">
-    <RotateSpinner />
+    <rotate-spinner />
   </div>
   <div :class="CONTENT_ELEMENT_CLASS" v-if="!loading">
     <router-view></router-view>
@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, ref, watch, provide, computed } from "vue";
+import { defineComponent, inject, watch, provide, computed } from "vue";
 import AudioPlayer from "./components/songs/AudioPlayer.vue";
 import AppHeader from "@/components/layout/AppHeader.vue"; // @ is an alias to /src
 import PageTabs from "@/components/layout/PageTabs.vue";
@@ -22,7 +22,6 @@ import { useGetAllSongsQuery } from "@/hooks/useSongsQuery";
 import { ActionTypes } from "@/store/action-types";
 import { GetAllSongsDocument } from "./hooks/useSongsQuery";
 import { CONTENT_ELEMENT_CLASS } from "@/config";
-import RotateSpinner from "./components/UI/RotateSpinner.vue";
 
 const INCREMENTOR = 20;
 
@@ -32,14 +31,13 @@ export default defineComponent({
     AppHeader,
     AudioPlayer,
     PageTabs,
-    RotateSpinner,
   },
   setup() {
     const store = useStore();
 
     //eslint-disable-next-line
     const apollo = inject("apollo") as ApolloClient<any>;
-    const limit = ref(31);
+    // const limit = ref(31);
     const skip = computed(function () {
       return store.getters.tracks.length;
     });
@@ -47,11 +45,18 @@ export default defineComponent({
       result: { data, error, loading },
       helpers: { fetchMore },
     } = useGetAllSongsQuery(apollo, {
-      variables: { limit: limit.value, skip: skip.value },
+      variables: { limit: INCREMENTOR, skip: skip.value },
     });
 
     const songs = computed(function () {
       return data.value;
+    });
+
+    const enableLoadMore = computed(function () {
+      if (typeof data.value?.getAllSongs?.totalCount === "undefined") {
+        return true;
+      }
+      return data.value.getAllSongs.totalCount !== skip.value + 3;
     });
 
     watch(songs, (newValue) => {
@@ -67,6 +72,9 @@ export default defineComponent({
     }
 
     function loadMore() {
+      if (!enableLoadMore.value) {
+        return;
+      }
       const contentEl = document.querySelector(`.${CONTENT_ELEMENT_CLASS}`);
       const scroolPos = contentEl?.scrollTop || 0;
 
@@ -79,8 +87,7 @@ export default defineComponent({
               ...existing,
               getAllSongs: {
                 ...existing.getAllSongs,
-                totalCount:
-                  existing.getAllSongs.totalCount + newSongs.totalCount,
+                totalCount: newSongs.totalCount,
                 songs: [...existing.getAllSongs.songs, ...newSongs.songs],
               },
             };
@@ -89,7 +96,7 @@ export default defineComponent({
         },
         query: GetAllSongsDocument,
         variables: {
-          limit: limit.value + INCREMENTOR,
+          limit: INCREMENTOR,
           skip: skip.value,
         },
       }).then(() => {
@@ -98,11 +105,11 @@ export default defineComponent({
             top: scroolPos,
           });
         }
-        limit.value = limit.value + INCREMENTOR;
       });
     }
     provide("loadMore", loadMore);
     provide("loading", loading);
+    provide("enableLoadMore", enableLoadMore);
     return {
       CONTENT_ELEMENT_CLASS,
       loading,
