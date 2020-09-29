@@ -67,21 +67,20 @@ export default defineComponent({
 
 <style scoped>
 .host {
-  --knob-border-radius: 50%;
+  /* --thump-border-radius: 7px; */
+  --thump-border-radius: 0px;
+  --thump-height: 20px;
+  --thump-width: 39px;
+  --thump-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2),
+    0px 0px 0px rgba(0, 0, 0, 0.2);
+  --thump-border: 0px solid rgba(0, 0, 0, 0.2);
   --knob-box-shadow: none;
-  --knob-size: 18px;
-  --bar-height: 2px;
-  --knob-handle-size: calc(var(--knob-size) * 2);
-  /* --bar-background: #ff383817; */
-  --bar-background: transparent;
-  /* --bar-background-active: #ff3838; */
+  --knob-handle-size: calc(var(--thump-height) * 2);
   --bar-background-active: transparent;
-  /* --knob-background: var(--main-color, #5638ff); */
   --knob-background: transparent;
   --bar-border-radius: 0;
-  --height: 42px;
+  --height: 32px;
   --pin-background: var(--main-color, #00ff15);
-  --offset-margin: -1px 0;
 }
 
 .aux-input {
@@ -90,7 +89,7 @@ export default defineComponent({
   background: transparent;
   margin: 0;
   margin-left: unset;
-  margin-inline-start: calc(16px - 32px / 2);
+  margin-inline-start: calc(16px - var(--height, 32px) / 2);
   /* user-select: none; */
   user-select: all;
   /* display: none; */
@@ -99,7 +98,7 @@ export default defineComponent({
   border: none;
 
   position: absolute;
-  height: 32px;
+  height: var(--height, 32px);
   outline: none;
   /* padding: 8px 14px; */
   padding: 0;
@@ -132,11 +131,11 @@ input[type="range"]::-webkit-slider-runnable-track {
   border: 0px solid rgba(34, 34, 34, 0.102);
 }
 input[type="range"]::-webkit-slider-thumb {
-  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(0, 0, 0, 0.2);
-  border: 0px solid rgba(0, 0, 0, 0.2);
-  height: 20px;
-  width: 39px;
-  border-radius: 7px;
+  box-shadow: var(--thump-box-shadow);
+  border: var(--thump-border);
+  height: var(--thump-height, 20px);
+  width: var(--thump-width, 39px);
+  border-radius: var(--thump-border-radius, 7px);
   background: var(--pin-background);
   cursor: pointer;
   -webkit-appearance: none;
@@ -156,11 +155,11 @@ input[type="range"]::-moz-range-track {
   border: 0px solid #000101;
 }
 input[type="range"]::-moz-range-thumb {
-  box-shadow: 0px 0px 0px #0000002c, 0px 0px 0px #0d0d0d15;
-  border: 0px solid #000000;
-  height: 20px;
-  width: 39px;
-  border-radius: 7px;
+  box-shadow: var(--thump-box-shadow);
+  border: var(--thump-border);
+  height: var(--thump-height, 20px);
+  width: var(--thump-width, 39px);
+  border-radius: var(--thump-border-radius, 7px);
   background: var(--pin-background);
   cursor: pointer;
 }
@@ -187,11 +186,11 @@ input[type="range"]::-ms-fill-upper {
   box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
 }
 input[type="range"]::-ms-thumb {
-  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
-  border: 0px solid #000000;
-  height: 20px;
-  width: 39px;
-  border-radius: 7px;
+  box-shadow: var(--thump-box-shadow);
+  border: var(--thump-border);
+  height: var(--thump-height, 20px);
+  width: var(--thump-width, 39px);
+  border-radius: var(--thump-border-radius, 7px);
   background: var(--pin-background);
   cursor: pointer;
 }

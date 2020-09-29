@@ -252,6 +252,16 @@ dialog {
   background-color: white;
 }
 
+@media screen and (max-width: 700px) {
+  dialog {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    border-radius: 0;
+  }
+}
+
 @media only screen and (min-device-width: 375px) and (max-device-width: 812px) and (orientation: landscape) {
   dialog {
     top: 0vh;
