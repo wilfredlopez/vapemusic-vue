@@ -147,14 +147,14 @@ const state: AppContextState = {
 };
 
 getLocalStorageTracks().then(({ favTracks, recentTracks, cacheTracks }) => {
-  if (favTracks) {
+  if (favTracks.length > 0) {
     state.user.favTracks = favTracks;
   }
-  if (recentTracks) {
+  if (recentTracks.length > 0) {
     state.user.recentTracks = recentTracks;
   }
 
-  if (cacheTracks && cacheTracks.length > 0) {
+  if (cacheTracks.length > 0) {
     state.music.tracks = cacheTracks;
   }
 });
