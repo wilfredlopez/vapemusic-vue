@@ -51,7 +51,7 @@ function useQuery<T extends {}, TVariables = OperationVariables>({
   const apolloCurrentResult = reactive({
     data: null,
     error: null,
-    loading: false,
+    loading: true,
     stale: false,
     networkStatus: {}
   }) as {

@@ -1,9 +1,12 @@
 <template>
   <AppHeader />
-  <div :class="CONTENT_ELEMENT_CLASS">
+  <div v-show="loading" class="spinner-content">
+    <RotateSpinner />
+  </div>
+  <div :class="CONTENT_ELEMENT_CLASS" v-if="!loading">
     <router-view></router-view>
   </div>
-  <AudioPlayer />
+  <AudioPlayer v-if="!loading" />
   <PageTabs />
 </template>
 
@@ -19,6 +22,8 @@ import { useGetAllSongsQuery } from "@/hooks/useSongsQuery";
 import { ActionTypes } from "@/store/action-types";
 import { GetAllSongsDocument } from "./hooks/useSongsQuery";
 import { CONTENT_ELEMENT_CLASS } from "@/config";
+import RotateSpinner from "./components/UI/RotateSpinner.vue";
+
 const INCREMENTOR = 20;
 
 export default defineComponent({
@@ -27,6 +32,7 @@ export default defineComponent({
     AppHeader,
     AudioPlayer,
     PageTabs,
+    RotateSpinner,
   },
   setup() {
     const store = useStore();
@@ -99,6 +105,7 @@ export default defineComponent({
     provide("loading", loading);
     return {
       CONTENT_ELEMENT_CLASS,
+      loading,
     };
   },
   apolloProvider,
@@ -106,6 +113,14 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.spinner-content {
+  height: 200px;
+  width: 100%;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
 :root {
   --main-color: #fa4d4d;
   --main-color-shade: #dc4444;
