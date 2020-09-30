@@ -1064,6 +1064,11 @@
   resolved "https://registry.yarnpkg.com/@soda/get-current-script/-/get-current-script-1.0.2.tgz#a53515db25d8038374381b73af20bb4f2e508d87"
   integrity sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==
 
+"@stencil/core@^2.0.1":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@stencil/core/-/core-2.0.3.tgz#8719d3131362076a35b7a7c865de4720766f3f47"
+  integrity sha512-d4qLDN7HKwJEK+ljhknD8azpM4bF49Dv7h5yG3RF+SPo8uozDq3p5ZNj1MgZoRgzh04kXNyG/MKnD8H2QN5YVw==
+
 "@types/anymatch@*":
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/@types/anymatch/-/anymatch-1.3.1.tgz#336badc1beecb9dacc38bea2cf32adf627a8421a"
@@ -9865,6 +9870,20 @@ wide-align@^1.1.0:
   integrity sha512-QGkOQc8XL6Bt5PwnsExKBPuMKBxnGxWWW3fU55Xt4feHozMUhdUMaBCk290qpm/wG5u/RSKzwdAC4i51YigihA==
   dependencies:
     string-width "^1.0.2 || 2"
+
+wl-range-vue@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/wl-range-vue/-/wl-range-vue-3.0.0.tgz#8b81915f6658c405451ce076bd13084806f07a04"
+  integrity sha512-8mqNT9SLt0Ff2bxfT2lxT6uZ3v1rbi45DhKb+QSaRyaWOyuApFeE0rEcpyeA4KPmyZRZmK6ckDpZZCi9Jg0ERg==
+  dependencies:
+    wl-range "0.0.2"
+
+wl-range@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/wl-range/-/wl-range-0.0.2.tgz#f3b2f8e8735b13ae1a3b18708f548e60ccef5cd7"
+  integrity sha512-xusdpq6eZeLzHfgq9ukm9DJNTIlTdBXc8mQvKblDO+ZUJHpnNJ/yh9RWDzXFgJZR25u7eMqiHubUSNZ0/OQcdw==
+  dependencies:
+    "@stencil/core" "^2.0.1"
 
 word-wrap@~1.2.3:
   version "1.2.3"

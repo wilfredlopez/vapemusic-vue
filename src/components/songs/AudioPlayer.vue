@@ -52,21 +52,21 @@ import PlayerDialog from "./PlayerDialog.vue";
 export default defineComponent({
   name: "AudioPlayer",
   components: {
-    PlayerDialog,
+    PlayerDialog
   },
   setup() {
     const store = useStore();
     const audioEl = ref<HTMLAudioElement | null>(null);
-    const playerOpen = computed(function () {
+    const playerOpen = computed(function() {
       return store.state.ui.playerOpen;
     });
-    const currentTrack = computed(function () {
+    const currentTrack = computed(function() {
       return store.getters.currentTrack || {};
     });
-    const audioUrl = computed(function () {
+    const audioUrl = computed(function() {
       return currentTrack.value?.audioUrl || "";
     });
-    const isPlaying = computed(function () {
+    const isPlaying = computed(function() {
       return store.getters.playingState.isPlaying;
     });
 
@@ -74,7 +74,7 @@ export default defineComponent({
       audioEl,
       src: audioUrl,
       autoplay: false,
-      loop: false,
+      loop: false
     });
 
     watch(currentTrack, (newval, oldvalue) => {
@@ -87,11 +87,11 @@ export default defineComponent({
       }
     });
 
-    const percentPlayed = computed(function () {
+    const percentPlayed = computed(function() {
       return store.getters.playingState.percentPlayed;
     });
 
-    watch(state.percentPlayed, (newValue) => {
+    watch(state.percentPlayed, newValue => {
       //autoplay next if % played reaches end.
       if (newValue >= 99.5) {
         store.dispatch(ActionTypes.NEXT_ACTION);
@@ -107,7 +107,7 @@ export default defineComponent({
       }
     }
 
-    watch(isPlaying, (is) => {
+    watch(isPlaying, is => {
       if (is) {
         controls.play();
       } else {
@@ -135,6 +135,7 @@ export default defineComponent({
     }
 
     function seekTo(to: number) {
+      // console.log(to, "TO");
       controls.seek(to);
     }
 
@@ -149,9 +150,9 @@ export default defineComponent({
       audioTime,
       audioTimeLeft,
       toggleOpenPlayer,
-      seekTo,
+      seekTo
     };
-  },
+  }
 });
 </script>
 

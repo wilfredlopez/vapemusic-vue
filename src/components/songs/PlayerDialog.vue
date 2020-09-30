@@ -23,6 +23,7 @@
             <p class="title">{{ currentTrack.title }}</p>
             <p class="artist">{{ currentTrack.artist }}</p>
           </div>
+          <!-- <wl-range @wlChange="seekTo" :value="percentPlayed"></wl-range> -->
           <TrackProgress :seekTo="seekTo" :value="percentPlayed" />
           <div class="track-progress-time">
             <div class="track-progress-time-current">{{ audioTime }}</div>
@@ -114,39 +115,39 @@ import { Song } from "@/models/Song.model";
 import TrackProgress from "../UI/TrackProgress.vue";
 export default defineComponent({
   components: {
-    TrackProgress,
+    TrackProgress
   },
   props: {
     show: {
       type: Boolean,
-      required: true,
+      required: true
     },
     title: {
       type: String,
-      required: false,
+      required: false
     },
     fixed: {
       type: Boolean,
       required: false,
-      default: false,
+      default: false
     },
     togglePlaying: {
-      type: Function,
+      type: Function
     },
     seekTo: {
       type: Function,
-      required: true,
+      required: true
     },
     audioTime: {
       type: String,
       required: false,
-      default: `0:00`,
+      default: `0:00`
     },
     audioTimeLeft: {
       type: String,
       required: false,
-      default: `0:00`,
-    },
+      default: `0:00`
+    }
   },
   emits: ["close"],
   methods: {
@@ -164,7 +165,7 @@ export default defineComponent({
     },
     favorite() {
       this.$store.dispatch(ActionTypes.FAV_ACTION, this.currentTrack);
-    },
+    }
   },
   computed: {
     percentPlayed(): number {
@@ -179,11 +180,11 @@ export default defineComponent({
     isFavorite(): boolean {
       return (
         typeof this.$store.getters.favTracks.find(
-          (t) => t.id === this.currentTrack.id
+          t => t.id === this.currentTrack.id
         ) !== "undefined"
       );
-    },
-  },
+    }
+  }
 });
 </script>
 

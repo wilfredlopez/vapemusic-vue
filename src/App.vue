@@ -22,7 +22,6 @@ import { useGetAllSongsQuery } from "@/hooks/useSongsQuery";
 import { ActionTypes } from "@/store/action-types";
 import { GetAllSongsDocument } from "./hooks/useSongsQuery";
 import { CONTENT_ELEMENT_CLASS } from "@/config";
-
 const INCREMENTOR = 20;
 
 export default defineComponent({
@@ -30,7 +29,7 @@ export default defineComponent({
   components: {
     AppHeader,
     AudioPlayer,
-    PageTabs,
+    PageTabs
   },
   setup() {
     const store = useStore();
@@ -38,28 +37,28 @@ export default defineComponent({
     //eslint-disable-next-line
     const apollo = inject("apollo") as ApolloClient<any>;
     // const limit = ref(31);
-    const skip = computed(function () {
+    const skip = computed(function() {
       return store.getters.tracks.length;
     });
     const {
       result: { data, error, loading },
-      helpers: { fetchMore },
+      helpers: { fetchMore }
     } = useGetAllSongsQuery(apollo, {
-      variables: { limit: INCREMENTOR, skip: skip.value },
+      variables: { limit: INCREMENTOR, skip: skip.value }
     });
 
-    const songs = computed(function () {
+    const songs = computed(function() {
       return data.value;
     });
 
-    const enableLoadMore = computed(function () {
+    const enableLoadMore = computed(function() {
       if (typeof data.value?.getAllSongs?.totalCount === "undefined") {
         return true;
       }
       return data.value.getAllSongs.totalCount !== skip.value + 3;
     });
 
-    watch(songs, (newValue) => {
+    watch(songs, newValue => {
       const allSongs = newValue.getAllSongs;
       if (allSongs.songs) {
         store.dispatch(ActionTypes.ADD_SONGS_IF_NOT_ACTION, allSongs.songs);
@@ -88,8 +87,8 @@ export default defineComponent({
               getAllSongs: {
                 ...existing.getAllSongs,
                 totalCount: newSongs.totalCount,
-                songs: [...existing.getAllSongs.songs, ...newSongs.songs],
-              },
+                songs: [...existing.getAllSongs.songs, ...newSongs.songs]
+              }
             };
           }
           return existing;
@@ -97,12 +96,12 @@ export default defineComponent({
         query: GetAllSongsDocument,
         variables: {
           limit: INCREMENTOR,
-          skip: skip.value,
-        },
+          skip: skip.value
+        }
       }).then(() => {
         if (contentEl) {
           contentEl.scrollTo({
-            top: scroolPos,
+            top: scroolPos
           });
         }
       });
@@ -112,10 +111,10 @@ export default defineComponent({
     provide("enableLoadMore", enableLoadMore);
     return {
       CONTENT_ELEMENT_CLASS,
-      loading,
+      loading
     };
   },
-  apolloProvider,
+  apolloProvider
 });
 </script>
 

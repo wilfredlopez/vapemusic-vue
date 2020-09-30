@@ -1,4 +1,5 @@
 import { createApp } from "vue";
+import Wl from "wl-range-vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
@@ -23,6 +24,8 @@ import { apolloClient } from "./apollo";
 // (Vue as any).config.devtools = true;
 
 const app = createApp(App);
+app.use(Wl);
+app.config.isCustomElement = el => el.startsWith("wl");
 // (app as any).config.devtools = process.env.NODE_ENV === "development";
 
 // After you create app
@@ -45,9 +48,9 @@ app.component("pause-icon", PauseIcon);
 app.component("down-arrow-icon", DownArrowIcon);
 app.component("profile-icon", ProfileIcon);
 app.component("search-icon", SearchIcon);
-
 //middleware
 app.use(store);
+
 app.use(router);
 app.provide("apollo", apolloClient);
 app.mount("#app");
