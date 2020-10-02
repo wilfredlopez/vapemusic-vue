@@ -23,12 +23,26 @@
             <p class="title">{{ currentTrack.title }}</p>
             <p class="artist">{{ currentTrack.artist }}</p>
           </div>
-          <!-- <wl-range @wlChange="seekTo" :value="percentPlayed"></wl-range> -->
-          <TrackProgress :seekTo="seekTo" :value="percentPlayed" />
-          <div class="track-progress-time">
+          <wl-range-vue
+            min="0"
+            max="100"
+            debounce="0.2"
+            color="danger"
+            @wl-change="handleSeek"
+            :value="percentPlayed"
+          >
+            <template v-slot:start>
+              <div>{{ audioTime }}</div>
+            </template>
+            <template v-slot:end>
+              <div>{{ audioTimeLeft }}</div>
+            </template>
+          </wl-range-vue>
+          <!-- <TrackProgress :value="percentPlayed" /> -->
+          <!-- <div class="track-progress-time">
             <div class="track-progress-time-current">{{ audioTime }}</div>
             <div class="track-progress-time-left">{{ audioTimeLeft }}</div>
-          </div>
+          </div> -->
         </section>
         <menu v-if="!fixed">
           <slot name="actions">
@@ -112,10 +126,11 @@
 import { defineComponent } from "vue";
 import { ActionTypes } from "@/store/action-types";
 import { Song } from "@/models/Song.model";
-import TrackProgress from "../UI/TrackProgress.vue";
+import { RangeChangeEventDetail } from "wl-range/dist/types/components/wl-range/RangeInterface";
+// import TrackProgress from "../UI/TrackProgress.vue";
 export default defineComponent({
   components: {
-    TrackProgress
+    // TrackProgress
   },
   props: {
     show: {
@@ -159,6 +174,14 @@ export default defineComponent({
     },
     playPrev() {
       this.$store.dispatch(ActionTypes.PREV_ACTION);
+    },
+    handleSeek(event: CustomEvent<RangeChangeEventDetail> | number) {
+      if (typeof event === "number") {
+        this.$props.seekTo(+event);
+      } else {
+        const value = event.detail.value;
+        this.$props.seekTo(+value);
+      }
     },
     playNext() {
       this.$store.dispatch(ActionTypes.NEXT_ACTION);

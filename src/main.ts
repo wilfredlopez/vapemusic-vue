@@ -24,12 +24,17 @@ import { apolloClient } from "./apollo";
 // (Vue as any).config.devtools = true;
 
 const app = createApp(App);
-app.use(Wl);
-app.config.isCustomElement = el => el.startsWith("wl");
-// (app as any).config.devtools = process.env.NODE_ENV === "development";
 
 // After you create app
+// (app as any).config.devtools = process.env.NODE_ENV === "development";
 // (window as any).__VUE_DEVTOOLS_GLOBAL_HOOK__.Vue = app.constructor;
+
+//middleware
+app.use(Wl);
+
+app.use(store);
+app.use(router);
+app.provide("apollo", apolloClient);
 
 //base components
 app.component("base-button", BaseButton);
@@ -48,9 +53,7 @@ app.component("pause-icon", PauseIcon);
 app.component("down-arrow-icon", DownArrowIcon);
 app.component("profile-icon", ProfileIcon);
 app.component("search-icon", SearchIcon);
-//middleware
-app.use(store);
 
-app.use(router);
-app.provide("apollo", apolloClient);
-app.mount("#app");
+router.isReady().then(() => {
+  app.mount("#app");
+});

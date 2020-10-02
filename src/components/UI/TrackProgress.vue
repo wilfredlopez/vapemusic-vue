@@ -46,7 +46,7 @@ export default defineComponent({
     },
     seekTo: {
       type: Function as PropType<(value: number) => void>,
-      required: true,
+      required: false,
     },
   },
   methods: {
@@ -58,7 +58,9 @@ export default defineComponent({
         if (isNaN(seekTo)) {
           return;
         }
-        this.$props.seekTo(seekTo);
+        if (this.$props.seekTo) {
+          this.$props.seekTo(seekTo);
+        }
       }
     },
   },

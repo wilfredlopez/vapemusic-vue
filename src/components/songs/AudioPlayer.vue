@@ -96,7 +96,7 @@ export default defineComponent({
       if (newValue >= 99.5) {
         store.dispatch(ActionTypes.NEXT_ACTION);
       }
-      store.dispatch(ActionTypes.PERCENT_PLAYED_ACTION, newValue);
+      // store.dispatch(ActionTypes.PERCENT_PLAYED_ACTION, newValue);
     });
 
     function togglePlaying() {
@@ -135,8 +135,10 @@ export default defineComponent({
     }
 
     function seekTo(to: number) {
-      // console.log(to, "TO");
-      controls.seek(to);
+      if (percentPlayed.value !== to) {
+        controls.seek(Math.floor(to));
+        store.dispatch(ActionTypes.PERCENT_PLAYED_ACTION, to);
+      }
     }
 
     return {

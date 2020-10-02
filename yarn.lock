@@ -9871,17 +9871,17 @@ wide-align@^1.1.0:
   dependencies:
     string-width "^1.0.2 || 2"
 
-wl-range-vue@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/wl-range-vue/-/wl-range-vue-3.0.0.tgz#8b81915f6658c405451ce076bd13084806f07a04"
-  integrity sha512-8mqNT9SLt0Ff2bxfT2lxT6uZ3v1rbi45DhKb+QSaRyaWOyuApFeE0rEcpyeA4KPmyZRZmK6ckDpZZCi9Jg0ERg==
+wl-range-vue@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/wl-range-vue/-/wl-range-vue-3.0.4.tgz#6a335455e7adb6e1b27b3f3411f0b757dc5e8424"
+  integrity sha512-fG99LV955FE4ZwLOexikqlcU6PVHNr/srSahw7/QUJwu9xhDh5zloe60ZHIWvVhm+AUsQ7HpurrP6LeBQ91yAQ==
   dependencies:
-    wl-range "0.0.2"
+    wl-range "^3.0.1"
 
-wl-range@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/wl-range/-/wl-range-0.0.2.tgz#f3b2f8e8735b13ae1a3b18708f548e60ccef5cd7"
-  integrity sha512-xusdpq6eZeLzHfgq9ukm9DJNTIlTdBXc8mQvKblDO+ZUJHpnNJ/yh9RWDzXFgJZR25u7eMqiHubUSNZ0/OQcdw==
+wl-range@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/wl-range/-/wl-range-3.0.1.tgz#6b03a0c3e16d1279a92c20a54868f92d4b8bff55"
+  integrity sha512-eIZokShaFhzuMXKy0GiiaVJmrgq88mBMlqUZMaSdn3KLj14lGgG0cxFwwJTQ17DXFwNJy4ZRh5EoQ/RQxjE+SQ==
   dependencies:
     "@stencil/core" "^2.0.1"
 

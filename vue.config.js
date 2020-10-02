@@ -21,6 +21,7 @@ module.exports = {
         // subpage: 'src/subpage/main.js'
 
     },
+
     pluginOptions: {
         apollo: {
             lintGQL: true
