@@ -23,21 +23,23 @@
             <p class="title">{{ currentTrack.title }}</p>
             <p class="artist">{{ currentTrack.artist }}</p>
           </div>
-          <wl-range-vue
-            min="0"
-            max="100"
-            debounce="0.2"
-            color="danger"
-            @wl-change="handleSeek"
-            :value="percentPlayed"
-          >
-            <template v-slot:start>
-              <div>{{ audioTime }}</div>
-            </template>
-            <template v-slot:end>
-              <div>{{ audioTimeLeft }}</div>
-            </template>
-          </wl-range-vue>
+
+          <div class="range-width">
+            <wl-range-vue
+              min="0"
+              max="100"
+              color="danger"
+              @wl-change="handleSeek"
+              :value="percentPlayed"
+            >
+              <template v-slot:start>
+                <div class="fix-width">{{ audioTime }}</div>
+              </template>
+              <template v-slot:end>
+                <div class="fix-width">{{ audioTimeLeft }}</div>
+              </template>
+            </wl-range-vue>
+          </div>
           <!-- <TrackProgress :value="percentPlayed" /> -->
           <!-- <div class="track-progress-time">
             <div class="track-progress-time-current">{{ audioTime }}</div>
@@ -135,34 +137,34 @@ export default defineComponent({
   props: {
     show: {
       type: Boolean,
-      required: true
+      required: true,
     },
     title: {
       type: String,
-      required: false
+      required: false,
     },
     fixed: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     togglePlaying: {
-      type: Function
+      type: Function,
     },
     seekTo: {
       type: Function,
-      required: true
+      required: true,
     },
     audioTime: {
       type: String,
       required: false,
-      default: `0:00`
+      default: `0:00`,
     },
     audioTimeLeft: {
       type: String,
       required: false,
-      default: `0:00`
-    }
+      default: `0:00`,
+    },
   },
   emits: ["close"],
   methods: {
@@ -188,7 +190,7 @@ export default defineComponent({
     },
     favorite() {
       this.$store.dispatch(ActionTypes.FAV_ACTION, this.currentTrack);
-    }
+    },
   },
   computed: {
     percentPlayed(): number {
@@ -203,15 +205,28 @@ export default defineComponent({
     isFavorite(): boolean {
       return (
         typeof this.$store.getters.favTracks.find(
-          t => t.id === this.currentTrack.id
+          (t) => t.id === this.currentTrack.id
         ) !== "undefined"
       );
-    }
-  }
+    },
+  },
 });
 </script>
 
 <style scoped>
+.fix-width {
+  width: 50px;
+  margin: 0;
+  padding: 0;
+  margin-left: 9px;
+}
+
+.range-width {
+  /* width: 333px; */
+  width: 100%;
+  margin: auto;
+  transform: scale(1.1) translate(0px, 0px);
+}
 .track-progress-time {
   display: flex;
   margin-top: 5px;

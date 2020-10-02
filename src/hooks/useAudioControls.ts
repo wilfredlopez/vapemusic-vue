@@ -74,7 +74,7 @@ export default function useAudioControls({
   }
 
   function setDurationState(dur: number) {
-    durationState.value = dur;
+    durationState.value = Math.floor(dur);
   }
 
   function setBufferedState(ranges: TimeRangeType[]) {
@@ -118,8 +118,9 @@ export default function useAudioControls({
     if (!el) {
       return;
     }
-    setTimeState(el.currentTime);
-    setPercentPlayed(getPercentPlayed(el.currentTime));
+    const val = Math.floor(el.currentTime);
+    setTimeState(val);
+    setPercentPlayed(getPercentPlayed(val));
   };
   const onProgress = () => {
     const el = audioEl.value;
@@ -233,12 +234,12 @@ export default function useAudioControls({
 
   watch(timeState, () => {
     const totalPercent = turnSecondsToMinutes(timeState.value);
-    currentAudioTimeRef.value = totalPercent;
-
     const totalLeft = turnSecondsToMinutesReverse(
       timeState.value,
       durationState.value
     );
+    currentAudioTimeRef.value = totalPercent;
+
     currentAudioTimeLeftRef.value = totalLeft;
   });
 
