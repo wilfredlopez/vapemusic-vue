@@ -1,13 +1,11 @@
-import { ApolloClient, gql } from "apollo-boost";
+import { gql } from "apollo-boost";
 import {
-  Maybe,
-  Scalars,
   SongFragmentFragment,
   SongFragmentFragmentDoc,
   SongResponse
 } from "./queryTypes";
 
-import useQuery, { Options } from "./useQuery";
+import { createUseQuery, Maybe, Scalars } from "use-vue-hooks";
 
 export type GetAllSongsQuery = { __typename?: "Query" } & {
   getAllSongs: { __typename?: "SongResponse" } & Pick<
@@ -35,16 +33,21 @@ export const GetAllSongsDocument = gql`
   ${SongFragmentFragmentDoc}
 `;
 
-export function useGetAllSongsQuery(
-  client: ApolloClient<GetAllSongsQuery>,
-  baseOptions?: Omit<
-    Options<GetAllSongsQuery, GetAllSongsQueryVariables>,
-    "query" | "client"
-  >
-) {
-  return useQuery<GetAllSongsQuery, GetAllSongsQueryVariables>({
-    ...baseOptions,
-    query: GetAllSongsDocument,
-    client: client
-  });
-}
+// export function useGetAllSongsQuery(
+//   client: ApolloClient<GetAllSongsQuery>,
+//   baseOptions?: Omit<
+//     UseQueryOptions<GetAllSongsQuery, GetAllSongsQueryVariables>,
+//     "query" | "client"
+//   >
+// ) {
+//   return useQuery<GetAllSongsQuery, GetAllSongsQueryVariables>({
+//     ...baseOptions,
+//     query: GetAllSongsDocument,
+//     client: client
+//   });
+// }
+
+export const [useGetAllSongsQuery, useGetAllSongsLazyQuery] = createUseQuery<
+  GetAllSongsQuery,
+  GetAllSongsQueryVariables
+>(GetAllSongsDocument);

@@ -1,14 +1,12 @@
 import {
-  Maybe,
-  Scalars,
   SongFragmentFragment,
   SongFragmentFragmentDoc,
   SongResponse
 } from "./queryTypes";
-import { ApolloClient, gql } from "apollo-boost";
+import { gql } from "apollo-boost";
 
-import useQuery, { Options } from "./useQuery";
-import useLazyQuery, { LazyOptions } from "./useLazyQuery";
+//MY OWN Library
+import { createUseQuery, Maybe, Scalars } from "use-vue-hooks";
 
 export type SearchSongsQuery = { __typename?: "Query" } & {
   searchSongs: { __typename?: "SongResponse" } & Pick<
@@ -37,30 +35,35 @@ export const SearchSongsDocument = gql`
   ${SongFragmentFragmentDoc}
 `;
 
-export function useSearchSongsQuery(
-  client: ApolloClient<SearchSongsQuery>,
-  baseOptions?: Omit<
-    Options<SearchSongsQuery, SearchSongsQueryVariables>,
-    "query" | "client"
-  >
-) {
-  return useQuery<SearchSongsQuery, SearchSongsQueryVariables>({
-    ...baseOptions,
-    query: SearchSongsDocument,
-    client
-  });
-}
+// export function useSearchSongsQuery(
+//   client: ApolloClient<SearchSongsQuery>,
+//   baseOptions?: Omit<
+//     Options<SearchSongsQuery, SearchSongsQueryVariables>,
+//     "query" | "client"
+//   >
+// ) {
+//   return useQuery<SearchSongsQuery, SearchSongsQueryVariables>({
+//     ...baseOptions,
+//     query: SearchSongsDocument,
+//     client
+//   });
+// }
 
-export function useSearchSongsLazyQuery(
-  client: ApolloClient<SearchSongsQuery>,
-  baseOptions?: Omit<
-    LazyOptions<SearchSongsQuery, SearchSongsQueryVariables>,
-    "query" | "client"
-  >
-) {
-  return useLazyQuery<SearchSongsQuery, SearchSongsQueryVariables>({
-    ...baseOptions,
-    query: SearchSongsDocument,
-    client
-  });
-}
+// export function useSearchSongsLazyQuery(
+//   client: ApolloClient<SearchSongsQuery>,
+//   baseOptions?: Omit<
+//     LazyOptions<SearchSongsQuery, SearchSongsQueryVariables>,
+//     "query" | "client"
+//   >
+// ) {
+//   return useLazyQuery<SearchSongsQuery, SearchSongsQueryVariables>({
+//     ...baseOptions,
+//     query: SearchSongsDocument,
+//     client
+//   });
+// }
+
+export const [useSearchSongsQuery, useSearchSongsLazyQuery] = createUseQuery<
+  SearchSongsQuery,
+  SearchSongsQueryVariables
+>(SearchSongsDocument);

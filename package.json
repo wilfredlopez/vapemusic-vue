@@ -19,6 +19,7 @@
     "core-js": "^3.6.5",
     "graphql": "^15.3.0",
     "graphql-tag": "^2.11.0",
+    "use-vue-hooks": "^1.0.0",
     "vue": "^3.0.0-0",
     "vue-apollo": "^3.0.0-alpha.3",
     "vue-router": "^4.0.0-0",
